@@ -68,13 +68,25 @@ npm test           # Jest unit tests (43 tests)
 
 ### Configuration
 
+All configuration is read from `.env`, created from the committed
+`.env.example` template (`cp .env.example .env`) and containing no secrets.
+`.env` is gitignored, so local/tunnel/staging overrides never enter the repo.
+Values are inlined at build time by `react-native-dotenv` and validated at
+startup with Zod — a missing or malformed value fails with a clear error
+instead of silently using a hardcoded default. A host environment variable
+overrides the matching `.env` key, so
+`API_BASE_URL=https://your-tunnel.example npm run ios` also works.
+
 | Variable | Purpose | Default |
 | --- | --- | --- |
 | `API_BASE_URL` | Point the app at a local tunnel, staging, or prod | `https://payload-cms-poc-seven.vercel.app` |
-| `APP_VERSION` | App version reported as `appVersion` context | runtime/default `1.0.0` |
+| `APP_VERSION` | App version reported as `appVersion` context (semantic `x.y.z`) | `1.0.0` |
+| `MARKET` | Delivery context market sent on every content request | `MX` |
+| `AUDIENCE` | Delivery context audience sent on every content request | `guest` |
+| `CONTRACT_VERSION` | Mobile content contract version this build supports | `1.1` |
 
-Busines config lives in `src/config/index.ts` (`MARKET=MX`, `AUDIENCE=guest`,
-`CONTRACT_VERSION=1.1`).
+After editing `.env`, restart Metro with a cache reset so the new values are
+re-inlined: `npm start -- --reset-cache`.
 
 ---
 
@@ -173,6 +185,11 @@ Run with `npm test` (currently 43 tests across 6 suites).
   crashing.
 - **AsyncStorage** — a small, dependency-free way to persist cached content and
   alert cooldown state so offline fallback and alert frequency survive restarts.
+- **`react-native-dotenv` (Babel plugin)** — loads `.env`/`.env.example` and
+  inlines config (base URL, market, audience, contract version, app version) at
+  build time, so no config value lives in source. It is pure Babel — no native
+  code, so reviewers don't need a new `pod install`. Paired with a Zod schema
+  in `src/config/index.ts`, a missing/invalid variable fails loudly at startup.
 - **Single `CmsClient`** with central query-context construction — keeps the
   `platform/market/audience/appVersion` params, timeout, abort, and cache wiring
   in one place so every screen cannot drift.
@@ -183,7 +200,7 @@ Run with `npm test` (currently 43 tests across 6 suites).
   chrome (a scroll% isn't easily measurable above the tab navigator); the
   `delayMs` still applies. Frequency/cooldown, placement, page targeting,
   dismissal, and actions are fully honoured.
-- **`appVersion` context** reports `process.env.APP_VERSION` (default `1.0.0`)
+- **`appVersion` context** reports `APP_VERSION` from `.env` (default `1.0.0`)
   rather than the native installed version. Wiring it to the OS build number is
   a small future change (`react-native-device-info` or the native
   `BuildConfig`/`CFBundleShortVersionString`).

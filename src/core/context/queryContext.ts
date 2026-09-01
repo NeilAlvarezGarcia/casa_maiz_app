@@ -1,15 +1,12 @@
 import {Platform} from 'react-native';
-import {AUDIENCE, CONTRACT_VERSION, MARKET} from '../../config';
+import {APP_VERSION, AUDIENCE, CONTRACT_VERSION, MARKET} from '../../config';
 
 /**
- * The installed application version reported to the CMS, using the
- * runtime/bundled version and normalized to semantic x.y.z. Falls back to the
- * bundle default (1.0.0) in development where a released version may not exist.
+ * The application version reported to the CMS, normalized to semantic x.y.z.
+ * `APP_VERSION` comes from the environment (.env) and is validated at startup.
  */
 export function getAppVersion(): string {
-  const raw: string | undefined =
-    (process.env.APP_VERSION as string | undefined) ?? '1.0.0';
-  return normalizeVersion(raw);
+  return normalizeVersion(APP_VERSION);
 }
 
 export function normalizeVersion(value: string): string {

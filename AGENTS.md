@@ -9,7 +9,7 @@ API and validated against a typed content contract (Zod). No editorial content
 is hardcoded.
 
 - **Platforms:** iOS & Android (React Native CLI)
-- **CMS API:** `https://payload-cms-poc-seven.vercel.app` (contract `1.1`)
+- **CMS API:** `API_BASE_URL env variable` (contract `CONTRACT_VERSION env variable`)
 - **Stack:** React Native 0.76, React Navigation 7, Zod 4, AsyncStorage
 
 ## Commands
@@ -26,6 +26,9 @@ npm test                # Jest unit tests (preset react-native)
 
 First-time iOS: `cd ios && bundle install && pod install`.
 
+After editing `.env`, restart Metro with a cache reset so values are re-inlined:
+`npm start -- --reset-cache`.
+
 ## Code style and conventions
 
 - **TypeScript** everywhere; strictness comes from the React Native shared
@@ -34,6 +37,15 @@ First-time iOS: `cd ios && bundle install && pod install`.
   `bracketSameLine`, `bracketSpacing: false`, `trailingComma: 'all'`.
 - **ESLint** (`.eslintrc.js`): extends `@react-native`; `overrides` enable the
   `jest` env for test files (`**/*.test.{ts,tsx}`, `__tests__/**`, `jest.setup.js`).
+- **Configuration:** all config values (`API_BASE_URL`, `APP_VERSION`, `MARKET`,
+  `AUDIENCE`, `CONTRACT_VERSION`) come from `.env` — gitignored (local), its
+  template is the committed `.env.example`; create it with
+  `cp .env.example .env`. Values are inlined at build time by
+  `react-native-dotenv` (`babel.config.js`) with `safe: true` /
+  `allowUndefined: false`. They are validated at startup by the Zod schema in
+  `src/config/index.ts`, and `getAppVersion()`/`AppUpdateBanner` consume the
+  env-driven `APP_VERSION`. Never reintroduce hardcoded config defaults or
+  fallbacks in source. Host environment variables override matching `.env` keys.
 - **Runtime validation:** every CMS response is parsed with Zod. The block
   union uses `z.union` with the catch-all evaluated last (`z.discriminatedUnion`
   with a plain `z.string()` discriminator is rejected by Zod 4). Do not

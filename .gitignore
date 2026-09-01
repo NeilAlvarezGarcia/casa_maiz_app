@@ -75,3 +75,8 @@ yarn-error.log
 
 # opencode project config (local overrides / credentials)
 .opencode/opencode.json
+
+# Environment files — local/override env is ignored; only the template is kept
+.env
+.env.*
+!.env.example

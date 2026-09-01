@@ -14,6 +14,7 @@ import {
 } from '../../navigation/destinationResolver';
 import {useActiveRoute} from '../../navigation/activeRoute';
 import {asyncStorageAdapter} from '../../cache/storage';
+import {getAppVersion} from '../../core/context/queryContext';
 import {
   alertDelayMs,
   cooldownAllows,
@@ -156,6 +157,7 @@ export function TopBar(): React.JSX.Element {
           minimumVersion={ops.appUpdate?.minimumVersion}
           recommendedVersion={ops.appUpdate?.recommendedVersion}
           message={ops.appUpdate?.message}
+          currentVersion={getAppVersion()}
         />
       ) : null}
       {showOperational ? (

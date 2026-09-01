@@ -9,7 +9,7 @@ interface AppUpdateBannerProps {
   minimumVersion?: string;
   recommendedVersion?: string;
   message?: string;
-  currentVersion?: string;
+  currentVersion: string;
 }
 
 /**
@@ -23,7 +23,7 @@ export function AppUpdateBanner({
   minimumVersion,
   recommendedVersion,
   message,
-  currentVersion = '1.0.0',
+  currentVersion,
 }: AppUpdateBannerProps): React.JSX.Element | null {
   const theme = useTheme();
   if (!policy) {
