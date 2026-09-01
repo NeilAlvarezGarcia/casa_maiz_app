@@ -72,3 +72,6 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# opencode project config (local overrides / credentials)
+.opencode/opencode.json
