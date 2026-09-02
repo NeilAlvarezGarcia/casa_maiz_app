@@ -1,9 +1,9 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import type {RestaurantCtaBlock} from '../../api/types';
-import {useTheme} from '../../ui/theme';
-import {ThemedText} from '../../ui/components/Text';
-import {ActionLink} from '../../ui/components/ActionLink';
+import { StyleSheet, View } from 'react-native';
+import type { RestaurantCtaBlock } from '../../api/types';
+import { useTheme } from '../../ui/theme';
+import { ThemedText } from '../../ui/components/Text';
+import { ActionLink } from '../../ui/components/ActionLink';
 
 interface RestaurantCtaProps {
   block: RestaurantCtaBlock;
@@ -14,6 +14,7 @@ export function RestaurantCta({
 }: RestaurantCtaProps): React.JSX.Element {
   const theme = useTheme();
   const emphasized = block.tone === 'tomato' || block.tone === 'accent';
+
   return (
     <View
       testID="restaurantCTA"
@@ -34,9 +35,7 @@ export function RestaurantCta({
         </ThemedText>
       ) : null}
       {block.description ? (
-        <ThemedText
-          variant="body"
-          color={emphasized ? 'onAccent' : 'muted'}>
+        <ThemedText variant="body" color={emphasized ? 'onAccent' : 'muted'}>
           {block.description}
         </ThemedText>
       ) : null}

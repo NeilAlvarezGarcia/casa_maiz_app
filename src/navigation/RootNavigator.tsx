@@ -1,24 +1,24 @@
 import React from 'react';
-import {Platform, StyleSheet, Text} from 'react-native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {HomeScreen} from '../features/home/HomeScreen';
-import {MenuScreen} from '../features/menu/MenuScreen';
-import {ReservationsScreen} from '../features/reservations/ReservationsScreen';
-import {PrivacyScreen} from '../features/privacy/PrivacyScreen';
-import {useBootstrap} from '../state/bootstrap';
-import {useTheme} from '../ui/theme';
-import type {CmsClient} from '../api/cmsClient';
-import {ROUTE_MAP} from './destinationResolver';
+import { Platform, StyleSheet, Text } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { HomeScreen } from '../features/home/HomeScreen';
+import { MenuScreen } from '../features/menu/MenuScreen';
+import { ReservationsScreen } from '../features/reservations/ReservationsScreen';
+import { PrivacyScreen } from '../features/privacy/PrivacyScreen';
+import { useBootstrap } from '../state/bootstrap';
+import { useTheme } from '../ui/theme';
+import type { CmsClient } from '../api/cmsClient';
+import { ROUTE_MAP } from './destinationResolver';
 
 const Tab = createBottomTabNavigator();
 
 type ScreenKey = 'Home' | 'Menu' | 'Reservations' | 'Privacy';
 
-const FALLBACK_TABS: Array<{route: ScreenKey; label: string}> = [
-  {route: 'Home', label: 'Inicio'},
-  {route: 'Menu', label: 'Menú'},
-  {route: 'Reservations', label: 'Reservar'},
-  {route: 'Privacy', label: 'Privacidad'},
+const FALLBACK_TABS: Array<{ route: ScreenKey; label: string }> = [
+  { route: 'Home', label: 'Inicio' },
+  { route: 'Menu', label: 'Menú' },
+  { route: 'Reservations', label: 'Reservar' },
+  { route: 'Privacy', label: 'Privacidad' },
 ];
 
 const GLYPHS: Record<ScreenKey, string> = {
@@ -28,8 +28,11 @@ const GLYPHS: Record<ScreenKey, string> = {
   Privacy: '\u2139',
 };
 
-
-export function RootNavigator({client}: {client: CmsClient}): React.JSX.Element {
+export function RootNavigator({
+  client,
+}: {
+  client: CmsClient;
+}): React.JSX.Element {
   const theme = useTheme();
   const bootstrap = useBootstrap();
   const items = bootstrap.data.navigation?.items ?? [];
@@ -44,13 +47,11 @@ export function RootNavigator({client}: {client: CmsClient}): React.JSX.Element 
       if (!route) {
         return null;
       }
-      return {route, label: item.label ?? route};
+      return { route, label: item.label ?? route };
     })
-    .filter((t): t is {route: ScreenKey; label: string} => t !== null);
+    .filter((t): t is { route: ScreenKey; label: string } => t !== null);
 
-  const tabs = cmsTabs.length
-    ? cmsTabs
-    : FALLBACK_TABS;
+  const tabs = cmsTabs.length ? cmsTabs : FALLBACK_TABS;
 
   return (
     <Tab.Navigator
@@ -75,8 +76,8 @@ export function RootNavigator({client}: {client: CmsClient}): React.JSX.Element 
           name={tab.route}
           options={{
             // eslint-disable-next-line react/no-unstable-nested-components
-            tabBarIcon: ({color, size}) => (
-              <Text style={{color, fontSize: size, lineHeight: size}}>
+            tabBarIcon: ({ color, size }) => (
+              <Text style={{ color, fontSize: size, lineHeight: size }}>
                 {GLYPHS[tab.route]}
               </Text>
             ),

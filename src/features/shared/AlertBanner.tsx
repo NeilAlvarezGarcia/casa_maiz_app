@@ -1,8 +1,8 @@
 import React from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
-import {useTheme} from '../../ui/theme';
-import {ThemedText} from '../../ui/components/Text';
-import type {Alert} from '../../api/schemas/bootstrap';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { useTheme } from '../../ui/theme';
+import { ThemedText } from '../../ui/components/Text';
+import type { Alert } from '../../api/schemas/bootstrap';
 
 interface AlertBannerProps {
   alert: Alert;
@@ -11,7 +11,6 @@ interface AlertBannerProps {
 
   onShown?: () => void;
 }
-
 
 export function AlertBanner({
   alert,
@@ -31,7 +30,10 @@ export function AlertBanner({
     <View
       testID={`alert-${alert.id}`}
       accessibilityRole="alert"
-      style={[styles.container, {backgroundColor: theme.colors.notice + '22'}]}>
+      style={[
+        styles.container,
+        { backgroundColor: theme.colors.notice + '22' },
+      ]}>
       <View style={styles.textBlock}>
         {alert.title ? (
           <ThemedText variant="title" style={styles.title}>

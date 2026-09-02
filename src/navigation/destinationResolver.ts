@@ -1,8 +1,6 @@
-import {Linking} from 'react-native';
-import {Platform} from 'react-native';
-import type {NavigationProp} from '@react-navigation/native';
-
-
+import { Linking } from 'react-native';
+import { Platform } from 'react-native';
+import type { NavigationProp } from '@react-navigation/native';
 
 export type NavigatorRootParamList = {
   Home: undefined;
@@ -13,13 +11,13 @@ export type NavigatorRootParamList = {
 
 export const ROUTE_MAP: Record<
   string,
-  {route: keyof NavigatorRootParamList; supportedPlatforms?: string[]}
+  { route: keyof NavigatorRootParamList; supportedPlatforms?: string[] }
 > = {
-  '/': {route: 'Home'},
-  '/menu': {route: 'Menu'},
-  '/reservas': {route: 'Reservations'},
-  '/reservation': {route: 'Reservations'},
-  '/legal/privacy_policy': {route: 'Privacy'},
+  '/': { route: 'Home' },
+  '/menu': { route: 'Menu' },
+  '/reservas': { route: 'Reservations' },
+  '/reservation': { route: 'Reservations' },
+  '/legal/privacy_policy': { route: 'Privacy' },
 };
 
 export interface ResolutionResult {
@@ -31,7 +29,6 @@ export interface ResolutionResult {
 const HTTPS_PREFIXES = ['http://', 'https://'];
 const PROTOCOL_REGEX = /^[a-z][a-z0-9+.-]*:/i;
 
-
 export function isValidExternalUrl(url: string): boolean {
   if (!HTTPS_PREFIXES.some(prefix => url.startsWith(prefix))) {
     return false;
@@ -40,9 +37,11 @@ export function isValidExternalUrl(url: string): boolean {
   return !PROTOCOL_REGEX.test(url.replace(/^https?:\/\//i, '').split('/')[0]);
 }
 
-
 export function resolveDestination(
-  rawDestination: string | {path?: string; href?: string; key?: string} | undefined,
+  rawDestination:
+    | string
+    | { path?: string; href?: string; key?: string }
+    | undefined,
 ): ResolutionResult {
   const path =
     (typeof rawDestination === 'string'
@@ -51,32 +50,32 @@ export function resolveDestination(
 
   const trimmed = path.trim();
   if (!trimmed) {
-    return {kind: 'unsupported'};
+    return { kind: 'unsupported' };
   }
-
 
   if (HTTPS_PREFIXES.some(prefix => trimmed.startsWith(prefix))) {
     if (isValidExternalUrl(trimmed)) {
-      return {kind: 'external', url: trimmed};
+      return { kind: 'external', url: trimmed };
     }
-    return {kind: 'unsupported'};
+    return { kind: 'unsupported' };
   }
-
 
   const mapped = ROUTE_MAP[trimmed];
   if (mapped) {
-    return {kind: 'internal', route: mapped.route};
+    return { kind: 'internal', route: mapped.route };
   }
 
-  return {kind: 'unsupported'};
+  return { kind: 'unsupported' };
 }
 
 type Navigator = NavigationProp<NavigatorRootParamList>;
 
-
 export async function handleDestination(
   navigation: Navigator,
-  rawDestination: string | {path?: string; href?: string; key?: string} | undefined,
+  rawDestination:
+    | string
+    | { path?: string; href?: string; key?: string }
+    | undefined,
 ): Promise<void> {
   try {
     const resolved = resolveDestination(rawDestination);
@@ -100,5 +99,8 @@ export function currentPlatformSupported(destination?: {
     return true;
   }
   const os = Platform.OS === 'android' ? 'android' : 'ios';
-  return destination.supportedPlatforms.includes(os) || destination.supportedPlatforms.includes('all');
+  return (
+    destination.supportedPlatforms.includes(os) ||
+    destination.supportedPlatforms.includes('all')
+  );
 }

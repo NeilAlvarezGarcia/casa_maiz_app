@@ -1,7 +1,6 @@
-import {Platform} from 'react-native';
+import { Platform } from 'react-native';
 
 export interface ThemeColors {
-
   accent: string;
   accentContrast: string;
   background: string;
@@ -32,7 +31,14 @@ export interface ThemeType {
   colors: ThemeColors;
   spacing: ThemeSpacing;
   radius: number;
-  fontSizes: {xs: number; sm: number; md: number; lg: number; xl: number; xxl: number};
+  fontSizes: {
+    xs: number;
+    sm: number;
+    md: number;
+    lg: number;
+    xl: number;
+    xxl: number;
+  };
   isDark: boolean;
   isAndroid: boolean;
   touchTarget: number;
@@ -84,12 +90,12 @@ export const spacing: ThemeSpacing = {
   xxl: 32,
 };
 
-const fontSizes = {xs: 12, sm: 14, md: 16, lg: 20, xl: 26, xxl: 32} as const;
+const fontSizes = { xs: 12, sm: 14, md: 16, lg: 20, xl: 26, xxl: 32 } as const;
 
 export function buildTheme(isDark: boolean, accent?: string): ThemeType {
   const colors: ThemeColors = isDark
-    ? {...darkColors, accent: accent ?? darkColors.accent}
-    : {...lightColors, accent: accent ?? lightColors.accent};
+    ? { ...darkColors, accent: accent ?? darkColors.accent }
+    : { ...lightColors, accent: accent ?? lightColors.accent };
   const isAndroid = Platform.OS === 'android';
   return {
     colors,

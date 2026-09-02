@@ -1,6 +1,6 @@
 import React from 'react';
-import {Text, type TextProps, type TextStyle} from 'react-native';
-import {useTheme} from '../theme';
+import { Text, type TextProps, type TextStyle } from 'react-native';
+import { useTheme } from '../theme';
 
 export type TextVariant =
   | 'eyebrow'
@@ -10,23 +10,18 @@ export type TextVariant =
   | 'caption'
   | 'button';
 
-
-
-const variantStyles: Record<
-  TextVariant,
-  (dark: boolean) => TextStyle
-> = {
+const variantStyles: Record<TextVariant, (dark: boolean) => TextStyle> = {
   eyebrow: () => ({
     fontSize: 12,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 1.2,
   }),
-  heading: () => ({fontSize: 26, fontWeight: '700', lineHeight: 32}),
-  title: () => ({fontSize: 20, fontWeight: '700', lineHeight: 26}),
-  body: () => ({fontSize: 16, fontWeight: '400', lineHeight: 24}),
-  caption: () => ({fontSize: 13, fontWeight: '400', lineHeight: 18}),
-  button: () => ({fontSize: 16, fontWeight: '600'}),
+  heading: () => ({ fontSize: 26, fontWeight: '700', lineHeight: 32 }),
+  title: () => ({ fontSize: 20, fontWeight: '700', lineHeight: 26 }),
+  body: () => ({ fontSize: 16, fontWeight: '400', lineHeight: 24 }),
+  caption: () => ({ fontSize: 13, fontWeight: '400', lineHeight: 18 }),
+  button: () => ({ fontSize: 16, fontWeight: '600' }),
 };
 
 interface ThemedTextProps extends TextProps {
@@ -34,7 +29,6 @@ interface ThemedTextProps extends TextProps {
   color?: 'text' | 'muted' | 'inverse' | 'onAccent' | 'accent';
   style?: TextStyle | TextStyle[];
 }
-
 
 export function ThemedText({
   variant = 'body',
@@ -53,7 +47,11 @@ export function ThemedText({
   return (
     <Text
       {...props}
-      style={[variantStyles[variant](theme.isDark), {color: colorMap[color]}, style]}
+      style={[
+        variantStyles[variant](theme.isDark),
+        { color: colorMap[color] },
+        style,
+      ]}
     />
   );
 }

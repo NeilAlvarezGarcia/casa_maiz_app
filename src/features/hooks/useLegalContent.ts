@@ -1,19 +1,19 @@
-import {useCallback, useEffect, useRef, useState} from 'react';
-import {CmsClient} from '../../api/cmsClient';
-import {CmsError} from '../../api/transport';
-import {extractPlainText} from '../../api/schemas/shared';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { CmsClient } from '../../api/cmsClient';
+import { CmsError } from '../../api/transport';
+import { extractPlainText } from '../../api/schemas/shared';
 
 export type LegalState =
-  | {status: 'loading'}
-  | {status: 'success'; title: string; summary?: string; body: string[]}
-  | {status: 'error'; message: string; retryable: boolean}
-  | {status: 'not-found'};
+  | { status: 'loading' }
+  | { status: 'success'; title: string; summary?: string; body: string[] }
+  | { status: 'error'; message: string; retryable: boolean }
+  | { status: 'not-found' };
 
 export function useLegalContent(
   client: CmsClient,
   key: string,
-): {state: LegalState; refresh: () => void} {
-  const [state, setState] = useState<LegalState>({status: 'loading'});
+): { state: LegalState; refresh: () => void } {
+  const [state, setState] = useState<LegalState>({ status: 'loading' });
   const [attempt, setAttempt] = useState(0);
   const mounted = useRef(true);
 
@@ -22,9 +22,9 @@ export function useLegalContent(
     const controller = new AbortController();
 
     const load = async () => {
-      setState({status: 'loading'});
+      setState({ status: 'loading' });
       try {
-        const raw = await client.getLegal(key, {signal: controller.signal});
+        const raw = await client.getLegal(key, { signal: controller.signal });
         if (controller.signal.aborted) {
           return;
         }
@@ -47,12 +47,20 @@ export function useLegalContent(
         }
         if (error instanceof CmsError) {
           if (error.code === 'not-found') {
-            setState({status: 'not-found'});
+            setState({ status: 'not-found' });
             return;
           }
-          setState({status: 'error', message: error.message, retryable: error.retryable});
+          setState({
+            status: 'error',
+            message: error.message,
+            retryable: error.retryable,
+          });
         } else {
-          setState({status: 'error', message: 'No se pudo cargar el contenido', retryable: true});
+          setState({
+            status: 'error',
+            message: 'No se pudo cargar el contenido',
+            retryable: true,
+          });
         }
       }
     };
@@ -66,5 +74,5 @@ export function useLegalContent(
 
   const refresh = useCallback(() => setAttempt(n => n + 1), []);
 
-  return {state, refresh};
+  return { state, refresh };
 }

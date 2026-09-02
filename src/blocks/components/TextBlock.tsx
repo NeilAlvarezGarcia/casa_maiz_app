@@ -1,7 +1,7 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import type {TextBlock} from '../../api/types';
-import {ThemedText} from '../../ui/components/Text';
+import { StyleSheet, View } from 'react-native';
+import type { TextBlock } from '../../api/types';
+import { ThemedText } from '../../ui/components/Text';
 
 interface TextBlockProps {
   block: TextBlock;
@@ -11,9 +11,11 @@ export function TextBlockComponent({
   block,
 }: TextBlockProps): React.JSX.Element {
   const isCenter = block.alignment === 'center';
+
   if (!block.heading && !block.body && !block.eyebrow) {
     return <View testID="textBlock-empty" />;
   }
+
   return (
     <View
       testID="textBlock"

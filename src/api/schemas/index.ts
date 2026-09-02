@@ -1,5 +1,5 @@
-import {z} from 'zod';
-import {CONTRACT_VERSION} from '../../config';
+import { z } from 'zod';
+import { CONTRACT_VERSION } from '../../config';
 import {
   archiveSchema,
   cardGridSchema,

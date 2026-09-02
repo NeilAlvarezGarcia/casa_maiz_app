@@ -1,5 +1,5 @@
-import {z} from 'zod';
-import {ctaSchema, destinationSchema, mediaSchema} from './shared';
+import { z } from 'zod';
+import { ctaSchema, destinationSchema, mediaSchema } from './shared';
 
 export const restaurantHeroSchema = z
   .object({

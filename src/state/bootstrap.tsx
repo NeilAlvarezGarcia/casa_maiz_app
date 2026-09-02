@@ -5,12 +5,12 @@ import React, {
   useState,
   type PropsWithChildren,
 } from 'react';
-import {CmsClient} from '../api/cmsClient';
+import { CmsClient } from '../api/cmsClient';
 import {
   bootstrapResponseSchema,
   type BootstrapData,
 } from '../api/schemas/bootstrap';
-import {CmsError} from '../api/transport';
+import { CmsError } from '../api/transport';
 
 export interface BootstrapState {
   data: BootstrapData;
@@ -53,7 +53,7 @@ export function BootstrapProvider({
 
     const load = async () => {
       try {
-        const raw = await client.getBootstrap({signal: controller.signal});
+        const raw = await client.getBootstrap({ signal: controller.signal });
         const parsed = bootstrapResponseSchema.safeParse(raw);
         if (!mounted) {
           return;
@@ -66,7 +66,11 @@ export function BootstrapProvider({
             accent: data.experience?.visualDefaults?.accent,
           });
         } else {
-          setState({data: EMPTY, loading: false, error: 'Configuración no disponible'});
+          setState({
+            data: EMPTY,
+            loading: false,
+            error: 'Configuración no disponible',
+          });
         }
       } catch (error) {
         if (mounted && !controller.signal.aborted) {
@@ -90,7 +94,9 @@ export function BootstrapProvider({
   }, [client]);
 
   return (
-    <BootstrapContext.Provider value={state}>{children}</BootstrapContext.Provider>
+    <BootstrapContext.Provider value={state}>
+      {children}
+    </BootstrapContext.Provider>
   );
 }
 
@@ -98,8 +104,7 @@ export function useBootstrap(): BootstrapState {
   return useContext(BootstrapContext);
 }
 
-
 export function useFeatureFlag(key: string): boolean {
-  const {data} = useBootstrap();
+  const { data } = useBootstrap();
   return data.featureFlags[key] === true;
 }

@@ -1,6 +1,5 @@
-import {z} from 'zod';
-import {destinationSchema, mediaSchema} from './shared';
-
+import { z } from 'zod';
+import { destinationSchema, mediaSchema } from './shared';
 
 export const bootstrapNavigationItemSchema = z
   .object({
@@ -82,7 +81,7 @@ export const experienceSchema = z
     layout: z.string().optional(),
     visibleModules: z.array(z.string()).optional(),
     labels: z
-      .array(z.object({key: z.string(), value: z.string()}).passthrough())
+      .array(z.object({ key: z.string(), value: z.string() }).passthrough())
       .optional(),
     navigation: bootstrapNavigationSchema.optional(),
     visualDefaults: z

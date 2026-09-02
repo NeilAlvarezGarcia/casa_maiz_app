@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, { useMemo } from 'react';
 import {
   Image,
   StyleSheet,
@@ -7,8 +7,8 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import {preferredMediaUrl} from '../../api/cmsClient';
-import type {Media} from '../../api/schemas/shared';
+import { preferredMediaUrl } from '../../api/cmsClient';
+import type { Media } from '../../api/schemas/shared';
 
 interface MediaImageProps {
   media?: Media;
@@ -21,7 +21,6 @@ interface MediaImageProps {
   accessibilityLabel?: string;
   testID?: string;
 }
-
 
 export function MediaImage({
   media,
@@ -53,8 +52,8 @@ export function MediaImage({
     return null;
   }
 
-  const {width: styleWidth, ...viewStyle} = (StyleSheet.flatten(style) ??
-    {}) as ViewStyle & {width?: number | string};
+  const { width: styleWidth, ...viewStyle } = (StyleSheet.flatten(style) ??
+    {}) as ViewStyle & { width?: number | string };
 
   const containerWidth = styleWidth ?? width ?? '100%';
   return (
@@ -63,10 +62,10 @@ export function MediaImage({
       style={[
         styles.container,
         viewStyle,
-        {width: containerWidth, aspectRatio: ratio},
+        { width: containerWidth, aspectRatio: ratio },
       ]}>
       <Image
-        source={{uri: resolved}}
+        source={{ uri: resolved }}
         style={styles.image}
         resizeMode="cover"
         accessible

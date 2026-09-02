@@ -1,7 +1,7 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import {useTheme} from '../../ui/theme';
-import {ThemedText} from '../../ui/components/Text';
+import { StyleSheet, View } from 'react-native';
+import { useTheme } from '../../ui/theme';
+import { ThemedText } from '../../ui/components/Text';
 
 interface SectionHeaderProps {
   eyebrow?: string;
@@ -17,13 +17,13 @@ export function SectionHeader({
   testID,
 }: SectionHeaderProps): React.JSX.Element | null {
   const theme = useTheme();
+
   if (!eyebrow && !title) {
     return null;
   }
+
   return (
-    <View
-      testID={testID}
-      style={[styles.container, center && styles.centered]}>
+    <View testID={testID} style={[styles.container, center && styles.centered]}>
       {eyebrow ? (
         <ThemedText variant="eyebrow" color="accent">
           {eyebrow}
@@ -34,7 +34,7 @@ export function SectionHeader({
           {title}
         </ThemedText>
       ) : null}
-      <View style={[styles.rule, {backgroundColor: theme.colors.border}]} />
+      <View style={[styles.rule, { backgroundColor: theme.colors.border }]} />
     </View>
   );
 }

@@ -1,15 +1,15 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import {useBootstrap, useFeatureFlag} from '../../state/bootstrap';
-import {useTheme} from '../../ui/theme';
-import {ThemedText} from '../../ui/components/Text';
-import {MediaImage} from '../../ui/components/MediaImage';
-import {ActionLink} from '../../ui/components/ActionLink';
-import {SectionHeader} from '../../blocks/components/SectionHeader';
-import type {BootstrapPromotion} from '../../api/schemas/bootstrap';
+import { StyleSheet, View } from 'react-native';
+import { useBootstrap, useFeatureFlag } from '../../state/bootstrap';
+import { useTheme } from '../../ui/theme';
+import { ThemedText } from '../../ui/components/Text';
+import { ActionLink } from '../../ui/components/ActionLink';
+import { ContentCard } from '../../ui/components/ContentCard';
+import { SectionHeader } from '../../blocks/components/SectionHeader';
+import type { BootstrapPromotion } from '../../api/schemas/bootstrap';
 
 export function HomePromotions(): React.JSX.Element | null {
-  const {data} = useBootstrap();
+  const { data } = useBootstrap();
   const promotions = (data.promotions ?? [])
     .filter(promo => (promo.placement ?? 'home') === 'home')
     .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
@@ -28,45 +28,28 @@ export function HomePromotions(): React.JSX.Element | null {
   );
 }
 
-function PromotionCard({promo}: {promo: BootstrapPromotion}): React.JSX.Element {
+function PromotionCard({
+  promo,
+}: {
+  promo: BootstrapPromotion;
+}): React.JSX.Element {
   return (
-    <View style={styles.card}>
-      <MediaImage
-        media={promo.mobileImage ?? promo.desktopImage}
-        style={styles.cardImage}
-        width="100%"
-        aspectRatio={16 / 9}
-      />
-      <View style={styles.cardBody}>
-        {promo.eyebrow ? (
-          <ThemedText variant="eyebrow" color="accent">
-            {promo.eyebrow}
-          </ThemedText>
-        ) : null}
-        {promo.title ? (
-          <ThemedText variant="title">{promo.title}</ThemedText>
-        ) : null}
-        {promo.description ? (
-          <ThemedText variant="body" color="muted">
-            {promo.description}
-          </ThemedText>
-        ) : null}
-        {promo.cta?.label ? (
-          <ActionLink
-            label={promo.cta.label}
-            destination={promo.cta.destination}
-            variant="outline"
-            style={styles.cta}
-          />
-        ) : null}
-      </View>
-    </View>
+    <ContentCard
+      image={promo.mobileImage ?? promo.desktopImage}
+      eyebrow={promo.eyebrow}
+      title={promo.title}
+      description={promo.description}
+      cta={{
+        label: promo.cta?.label,
+        destination: promo.cta?.destination,
+      }}
+      ctaVariant="outline"
+    />
   );
 }
 
 export function FlaggedHomeModules(): React.JSX.Element | null {
-  const theme = useTheme();
-  const {data} = useBootstrap();
+  const { data } = useBootstrap();
   const showStoreLocator = useFeatureFlag('show_store_locator_banner');
   const showRewards = useFeatureFlag('show_rewards_module');
 
@@ -81,50 +64,67 @@ export function FlaggedHomeModules(): React.JSX.Element | null {
     return null;
   }
 
-  const flagCardStyle = [
-    styles.flagCard,
-    {
-      backgroundColor: theme.colors.surfaceAlt,
-      borderColor: theme.colors.border,
-    },
-  ];
-
   return (
     <View style={styles.section}>
       {showStoreLocator ? (
-        <View
+        <FlagCard
           testID="flag-store-locator"
-          accessibilityRole="alert"
-          style={flagCardStyle}>
-          <ThemedText variant="title">Encuentra tu sucursal</ThemedText>
-          <ThemedText variant="body" color="muted">
-            Consulta la más cercana y el horario de cada casa.
-          </ThemedText>
-          <ActionLink
-            label={reserveLabel}
-            destination={{path: '/reservas'}}
-            variant="outline"
-            style={styles.flagCta}
-          />
-        </View>
+          title="Encuentra tu sucursal"
+          description="Consulta la más cercana y el horario de cada casa."
+          ctaLabel={reserveLabel}
+          destination={{ path: '/reservas' }}
+        />
       ) : null}
       {showRewards ? (
-        <View
+        <FlagCard
           testID="flag-rewards"
-          accessibilityRole="alert"
-          style={flagCardStyle}>
-          <ThemedText variant="title">Recompensas</ThemedText>
-          <ThemedText variant="body" color="muted">
-            Acumula puntos con cada visita y canjéalos en tu próxima orden.
-          </ThemedText>
-          <ActionLink
-            label={menuLabel}
-            destination={{path: '/menu'}}
-            variant="outline"
-            style={styles.flagCta}
-          />
-        </View>
+          title="Recompensas"
+          description="Acumula puntos con cada visita y canjéalos en tu próxima orden."
+          ctaLabel={menuLabel}
+          destination={{ path: '/menu' }}
+        />
       ) : null}
+    </View>
+  );
+}
+
+interface FlagCardProps {
+  testID: string;
+  title: string;
+  description: string;
+  ctaLabel: string;
+  destination: { path: string };
+}
+
+function FlagCard({
+  testID,
+  title,
+  description,
+  ctaLabel,
+  destination,
+}: FlagCardProps): React.JSX.Element {
+  const theme = useTheme();
+  return (
+    <View
+      testID={testID}
+      accessibilityRole="alert"
+      style={[
+        styles.flagCard,
+        {
+          backgroundColor: theme.colors.surfaceAlt,
+          borderColor: theme.colors.border,
+        },
+      ]}>
+      <ThemedText variant="title">{title}</ThemedText>
+      <ThemedText variant="body" color="muted">
+        {description}
+      </ThemedText>
+      <ActionLink
+        label={ctaLabel}
+        destination={destination}
+        variant="outline"
+        style={styles.flagCta}
+      />
     </View>
   );
 }
@@ -133,22 +133,6 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 16,
     gap: 10,
-  },
-  card: {
-    borderRadius: 14,
-    overflow: 'hidden',
-    marginBottom: 16,
-  },
-  cardImage: {
-    borderRadius: 14,
-  },
-  cardBody: {
-    paddingVertical: 8,
-    gap: 6,
-  },
-  cta: {
-    alignSelf: 'flex-start',
-    marginTop: 4,
   },
   flagCard: {
     borderRadius: 14,

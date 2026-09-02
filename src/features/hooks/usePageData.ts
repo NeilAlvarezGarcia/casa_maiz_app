@@ -1,24 +1,29 @@
-import {useCallback, useEffect, useRef, useState} from 'react';
-import {CmsClient} from '../../api/cmsClient';
-import {CmsError} from '../../api/transport';
-import type {PageData} from '../../api/types';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { CmsClient } from '../../api/cmsClient';
+import { CmsError } from '../../api/transport';
+import type { PageData } from '../../api/types';
 
 export type PageLoadState =
-  | {status: 'loading'}
-  | {status: 'success'; data: PageData; stale: boolean; staleReason?: string}
-  | {status: 'error'; code: CmsError['code']; message: string; retryable: boolean}
-  | {status: 'unsupported'; message: string}
-  | {status: 'not-found'};
+  | { status: 'loading' }
+  | { status: 'success'; data: PageData; stale: boolean; staleReason?: string }
+  | {
+      status: 'error';
+      code: CmsError['code'];
+      message: string;
+      retryable: boolean;
+    }
+  | { status: 'unsupported'; message: string }
+  | { status: 'not-found' };
 
 export function usePageData(
   client: CmsClient,
   slug: string,
-  _options: {preferCacheFirst?: boolean} = {},
+  _options: { preferCacheFirst?: boolean } = {},
 ): {
   state: PageLoadState;
   refresh: () => void;
 } {
-  const [state, setState] = useState<PageLoadState>({status: 'loading'});
+  const [state, setState] = useState<PageLoadState>({ status: 'loading' });
   const [attempt, setAttempt] = useState(0);
   const mounted = useRef(true);
   const abortRef = useRef<AbortController | null>(null);
@@ -35,24 +40,24 @@ export function usePageData(
     abortRef.current = controller;
 
     const load = async () => {
-      notify({status: 'loading'});
+      notify({ status: 'loading' });
       try {
-        const data = await client.getPage(slug, {signal: controller.signal});
+        const data = await client.getPage(slug, { signal: controller.signal });
         if (controller.signal.aborted) {
           return;
         }
-        notify({status: 'success', data, stale: false});
+        notify({ status: 'success', data, stale: false });
       } catch (error) {
         if (controller.signal.aborted) {
           return;
         }
         if (error instanceof CmsError) {
           if (error.code === 'unsupported-contract') {
-            notify({status: 'unsupported', message: error.message});
+            notify({ status: 'unsupported', message: error.message });
             return;
           }
           if (error.code === 'not-found') {
-            notify({status: 'not-found'});
+            notify({ status: 'not-found' });
             return;
           }
         }
@@ -104,5 +109,5 @@ export function usePageData(
     setAttempt(n => n + 1);
   }, []);
 
-  return {state, refresh};
+  return { state, refresh };
 }

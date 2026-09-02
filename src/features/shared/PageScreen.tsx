@@ -1,19 +1,14 @@
 import React from 'react';
-import {
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
-import {BlockRenderer} from '../../blocks/BlockRenderer';
-import {useTheme} from '../../ui/theme';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { BlockRenderer } from '../../blocks/BlockRenderer';
+import { useTheme } from '../../ui/theme';
 import {
   LoadingState,
   ErrorState,
   EmptyState,
 } from '../../ui/components/StateViews';
-import type {PageLoadState} from '../hooks/usePageData';
-import type {LayoutBlock} from '../../api/types';
+import type { PageLoadState } from '../hooks/usePageData';
+import type { LayoutBlock } from '../../api/types';
 
 interface PageScreenProps {
   title?: string;
@@ -24,7 +19,6 @@ interface PageScreenProps {
   banner?: React.ReactNode;
   testID?: string;
 }
-
 
 export function PageScreen({
   title,
@@ -83,11 +77,11 @@ export function PageScreen({
   return (
     <ScrollView
       testID={testID}
-      style={[styles.scroll, {backgroundColor: theme.colors.background}]}
+      style={[styles.scroll, { backgroundColor: theme.colors.background }]}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={[
         styles.content,
-        {paddingHorizontal: theme.horizontalPadding},
+        { paddingHorizontal: theme.horizontalPadding },
       ]}
       refreshControl={
         onRefresh ? (
@@ -98,14 +92,16 @@ export function PageScreen({
             colors={[theme.colors.accent]}
           />
         ) : undefined
-      }
-      >
+      }>
       {banner ? <View style={styles.banner}>{banner}</View> : null}
       {layout.length === 0 ? (
         <EmptyState label="Esta página aún no tiene contenido." />
       ) : (
         layout.map((block, i) => (
-          <BlockRenderer key={i} block={block as LayoutBlock & {blockType: string}} />
+          <BlockRenderer
+            key={i}
+            block={block as LayoutBlock & { blockType: string }}
+          />
         ))
       )}
     </ScrollView>

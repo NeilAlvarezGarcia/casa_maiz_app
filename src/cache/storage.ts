@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type {StorageAdapter} from './contentCache';
+import type { StorageAdapter } from './contentCache';
 
 export const asyncStorageAdapter: StorageAdapter = {
   async getItem(key: string): Promise<string | null> {

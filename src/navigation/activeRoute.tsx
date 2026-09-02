@@ -4,13 +4,12 @@ import React, {
   type PropsWithChildren,
 } from 'react';
 
-
 const ActiveRouteContext = createContext<string>('Home');
 
 export function ActiveRouteProvider({
   value,
   children,
-}: PropsWithChildren<{value: string}>): React.JSX.Element {
+}: PropsWithChildren<{ value: string }>): React.JSX.Element {
   return (
     <ActiveRouteContext.Provider value={value}>
       {children}
@@ -22,10 +21,9 @@ export function useActiveRoute(): string {
   return useContext(ActiveRouteContext);
 }
 
-
 export function focusedRouteName(state: unknown): string {
   const root = state as
-    | {routes?: Array<{name?: string; state?: unknown}>; index?: number}
+    | { routes?: Array<{ name?: string; state?: unknown }>; index?: number }
     | undefined;
   const current = root?.routes?.[root.index ?? 0];
   const name = current?.name;

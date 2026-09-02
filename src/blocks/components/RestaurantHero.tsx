@@ -1,15 +1,17 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import type {RestaurantHeroBlock} from '../../api/types';
-import {ThemedText} from '../../ui/components/Text';
-import {MediaImage} from '../../ui/components/MediaImage';
-import {ActionLink} from '../../ui/components/ActionLink';
+import { StyleSheet, View } from 'react-native';
+import type { RestaurantHeroBlock } from '../../api/types';
+import { ThemedText } from '../../ui/components/Text';
+import { MediaImage } from '../../ui/components/MediaImage';
+import { ActionLink } from '../../ui/components/ActionLink';
 
 interface RestaurantHeroProps {
   block: RestaurantHeroBlock;
 }
 
-export function RestaurantHero({block}: RestaurantHeroProps): React.JSX.Element {
+export function RestaurantHero({
+  block,
+}: RestaurantHeroProps): React.JSX.Element {
   return (
     <View style={styles.container} testID="restaurantHero">
       <MediaImage
@@ -25,12 +27,18 @@ export function RestaurantHero({block}: RestaurantHeroProps): React.JSX.Element 
           </ThemedText>
         ) : null}
         {block.headline ? (
-          <ThemedText variant="heading" color="onAccent" style={styles.headline}>
+          <ThemedText
+            variant="heading"
+            color="onAccent"
+            style={styles.headline}>
             {block.headline}
           </ThemedText>
         ) : null}
         {block.description ? (
-          <ThemedText variant="body" color="onAccent" style={styles.description}>
+          <ThemedText
+            variant="body"
+            color="onAccent"
+            style={styles.description}>
             {block.description}
           </ThemedText>
         ) : null}

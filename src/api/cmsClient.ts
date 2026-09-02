@@ -1,17 +1,17 @@
-import {API_BASE_URL} from '../config';
+import { API_BASE_URL } from '../config';
 import {
   buildDeliveryQuery,
   deliveryQueryToSearchParams,
   type DeliveryQuery,
 } from '../core/context/queryContext';
-import {fetchJson, CmsError} from './transport';
+import { fetchJson, CmsError } from './transport';
 import {
   pageResponseSchema,
   isSupportedContract,
   CONTRACT_VERSION_SUPPORTED,
 } from './schemas';
-import type {PageData} from './types';
-import {ContentCache, type StorageAdapter} from '../cache/contentCache';
+import type { PageData } from './types';
+import { ContentCache, type StorageAdapter } from '../cache/contentCache';
 
 export interface CmsClientOptions {
   baseUrl?: string;
@@ -46,7 +46,7 @@ export function resolveMediaUrl(
 }
 
 export function preferredMediaUrl(
-  media: {url?: string; sizes?: Record<string, {url?: string}>} | undefined,
+  media: { url?: string; sizes?: Record<string, { url?: string }> } | undefined,
   baseUrl: string = API_BASE_URL,
 ): string | undefined {
   if (!media) {
@@ -68,7 +68,7 @@ export class CmsClient {
       ...buildDeliveryQuery(),
       ...options.context,
     };
-    this.cache = new ContentCache({storage: options.storage});
+    this.cache = new ContentCache({ storage: options.storage });
   }
 
   private endpoint(path: string): string {
@@ -94,7 +94,7 @@ export class CmsClient {
     }
 
     const url = this.withContext(`pages/${slug}`);
-    const raw = await fetchJson(url, {signal: options.signal});
+    const raw = await fetchJson(url, { signal: options.signal });
 
     const parsed = pageResponseSchema.safeParse(raw);
     if (!parsed.success) {
@@ -108,7 +108,9 @@ export class CmsClient {
     if (!isSupportedContract(envelope)) {
       throw new CmsError(
         'unsupported-contract',
-        `Unsupported content contract version "${envelope.contractVersion ?? 'unknown'}" (expected ${CONTRACT_VERSION_SUPPORTED})`,
+        `Unsupported content contract version "${
+          envelope.contractVersion ?? 'unknown'
+        }" (expected ${CONTRACT_VERSION_SUPPORTED})`,
       );
     }
     if (!envelope.data) {

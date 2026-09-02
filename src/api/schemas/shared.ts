@@ -1,6 +1,5 @@
-import {z} from 'zod';
-import {CONTRACT_VERSION} from '../../config';
-
+import { z } from 'zod';
+import { CONTRACT_VERSION } from '../../config';
 
 export const supportedContractVersion = CONTRACT_VERSION;
 
@@ -81,12 +80,14 @@ export type Cta = z.infer<typeof ctaSchema>;
 export function extractPlainText(root?: {
   children?: Array<{
     text?: string;
-    children?: Array<{text?: string; children?: Array<{text?: string}>}>;
+    children?: Array<{ text?: string; children?: Array<{ text?: string }> }>;
   }>;
 }): string {
   const collect = (nodes: any[]): string =>
     nodes
-      .map(n => (typeof n?.text === 'string' ? n.text : collect(n?.children ?? [])))
+      .map(n =>
+        typeof n?.text === 'string' ? n.text : collect(n?.children ?? []),
+      )
       .join('');
   return collect(root?.children ?? []).trim();
 }

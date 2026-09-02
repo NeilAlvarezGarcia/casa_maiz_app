@@ -1,8 +1,8 @@
 import React from 'react';
-import {Linking, Pressable, StyleSheet, View} from 'react-native';
-import {useTheme} from '../../ui/theme';
-import {ThemedText} from '../../ui/components/Text';
-import {normalizeVersion} from '../../core/context/queryContext';
+import { Linking, Pressable, StyleSheet, View } from 'react-native';
+import { useTheme } from '../../ui/theme';
+import { ThemedText } from '../../ui/components/Text';
+import { normalizeVersion } from '../../core/context/queryContext';
 
 interface AppUpdateBannerProps {
   policy?: string;
@@ -11,7 +11,6 @@ interface AppUpdateBannerProps {
   message?: string;
   currentVersion: string;
 }
-
 
 export function AppUpdateBanner({
   policy,
@@ -36,12 +35,10 @@ export function AppUpdateBanner({
   }
 
   const text = required
-    ? (message ?? 'Es necesario actualizar la aplicación para continuar.')
-    : (message ?? 'Hay una versión nueva disponible. Recomendamos actualizar.');
+    ? message ?? 'Es necesario actualizar la aplicación para continuar.'
+    : message ?? 'Hay una versión nueva disponible. Recomendamos actualizar.';
 
   const handleUpdate = () => {
-
-
     Linking.openURL('https://example.invalid/store').catch(() => {});
   };
 
@@ -52,7 +49,9 @@ export function AppUpdateBanner({
       style={[
         styles.container,
         {
-          backgroundColor: required ? theme.colors.danger + '22' : theme.colors.surfaceAlt,
+          backgroundColor: required
+            ? theme.colors.danger + '22'
+            : theme.colors.surfaceAlt,
           borderColor: required ? theme.colors.danger : theme.colors.border,
         },
       ]}>
@@ -63,9 +62,9 @@ export function AppUpdateBanner({
         accessibilityRole="button"
         accessibilityLabel="Actualizar"
         onPress={handleUpdate}
-        style={({pressed}) => [
+        style={({ pressed }) => [
           styles.button,
-          {backgroundColor: theme.colors.accent},
+          { backgroundColor: theme.colors.accent },
           pressed && styles.pressed,
         ]}>
         <ThemedText variant="button" color="onAccent">

@@ -1,4 +1,4 @@
-import {z} from 'zod';
+import { z } from 'zod';
 import {
   cardGridSchema,
   carouselSchema,
@@ -17,7 +17,7 @@ export type TextBlock = z.infer<typeof textBlockSchema>;
 export type RestaurantCtaBlock = z.infer<typeof restaurantCtaSchema>;
 export type ImageBlock = z.infer<typeof imageBlockSchema>;
 
-export type LayoutBlock = Record<string, unknown> & {blockType: string};
+export type LayoutBlock = Record<string, unknown> & { blockType: string };
 
 export interface PageData {
   id?: string;

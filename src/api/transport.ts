@@ -17,7 +17,10 @@ export class CmsError extends Error {
     this.name = 'CmsError';
     this.code = code;
     this.status = status;
-    this.retryable = code === 'network' || code === 'timeout' || (status !== undefined && status >= 500);
+    this.retryable =
+      code === 'network' ||
+      code === 'timeout' ||
+      (status !== undefined && status >= 500);
   }
 }
 
@@ -31,9 +34,9 @@ function debugLog(...parts: unknown[]): void {
 
 export async function fetchJson(
   url: string,
-  options: {signal?: AbortSignal; method?: string; body?: string} = {},
+  options: { signal?: AbortSignal; method?: string; body?: string } = {},
 ): Promise<unknown> {
-  const {signal, method = 'GET', body} = options;
+  const { signal, method = 'GET', body } = options;
 
   const controller = new AbortController();
   const timeoutHandle = setTimeout(() => controller.abort(), 15000);
@@ -49,7 +52,7 @@ export async function fetchJson(
         signal: controller.signal,
         headers:
           method === 'POST' || body
-            ? {'Content-Type': 'application/json'}
+            ? { 'Content-Type': 'application/json' }
             : undefined,
       });
     } catch (error) {
@@ -71,8 +74,8 @@ export async function fetchJson(
           typeof payload?.error === 'string'
             ? payload.error
             : Array.isArray(payload?.errors)
-              ? payload.errors[0]?.message ?? undefined
-              : undefined;
+            ? payload.errors[0]?.message ?? undefined
+            : undefined;
       } catch {
         serverMessage = undefined;
       }
@@ -90,7 +93,12 @@ export async function fetchJson(
       throw new CmsError('invalid-json', 'Response body was not valid JSON');
     }
 
-    debugLog('GET', url, '->', (json as Record<string, unknown>)?.contractVersion);
+    debugLog(
+      'GET',
+      url,
+      '->',
+      (json as Record<string, unknown>)?.contractVersion,
+    );
     return json;
   } finally {
     clearTimeout(timeoutHandle);

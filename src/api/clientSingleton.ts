@@ -1,6 +1,6 @@
-import {CmsClient} from '../api/cmsClient';
-import {asyncStorageAdapter} from '../cache/storage';
-import {API_BASE_URL} from '../config';
+import { CmsClient } from '../api/cmsClient';
+import { asyncStorageAdapter } from '../cache/storage';
+import { API_BASE_URL } from '../config';
 
 let client: CmsClient | null = null;
 
@@ -17,6 +17,6 @@ export function getCmsClient(): CmsClient {
 export function createTestCmsClient(): CmsClient {
   return new CmsClient({
     baseUrl: API_BASE_URL,
-    context: {platform: 'android'},
+    context: { platform: 'android' },
   });
 }

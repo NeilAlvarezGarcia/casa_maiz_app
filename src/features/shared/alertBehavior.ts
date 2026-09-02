@@ -1,17 +1,12 @@
-import type {Alert} from '../../api/schemas/bootstrap';
-import {ROUTE_MAP} from '../../navigation/destinationResolver';
-
-
-
+import type { Alert } from '../../api/schemas/bootstrap';
+import { ROUTE_MAP } from '../../navigation/destinationResolver';
 
 export function isTopBarPlacement(alert: Alert): boolean {
   return (alert.placement ?? 'topBar') === 'topBar';
 }
 
-
 export function alertDelayMs(alert: Alert): number {
   const trigger = alert.trigger;
-
 
   if (!trigger || trigger.type === 'scroll') {
     return trigger?.delayMs ?? 0;
@@ -19,12 +14,10 @@ export function alertDelayMs(alert: Alert): number {
   return trigger.delayMs ?? 0;
 }
 
-
 function cooldownMs(alert: Alert): number {
   const hours = alert.frequency?.cooldownHours;
   return (hours ?? 0) * 60 * 60 * 1000;
 }
-
 
 export function cooldownAllows(
   alert: Alert,
@@ -41,7 +34,6 @@ export function cooldownAllows(
   }
   return true;
 }
-
 
 export function pageTargets(alert: Alert, activeRouteName: string): boolean {
   const slugs = alert.pageSlugs ?? [];

@@ -6,11 +6,11 @@
  * the network is unavailable, and flags it as stale once the server-provided
  * expiry boundary passes.
  */
-import {CmsClient} from '../src/api/cmsClient';
-import {isSupportedContract} from '../src/api/schemas';
-import {CONTRACT_VERSION_SUPPORTED} from '../src/api/schemas';
-import {CmsError} from '../src/api/transport';
-import {fetchJson} from '../src/api/transport';
+import { CmsClient } from '../src/api/cmsClient';
+import { isSupportedContract } from '../src/api/schemas';
+import { CONTRACT_VERSION_SUPPORTED } from '../src/api/schemas';
+import { CmsError } from '../src/api/transport';
+import { fetchJson } from '../src/api/transport';
 
 jest.mock('../src/api/transport', () => {
   const actual = jest.requireActual('../src/api/transport');
@@ -45,18 +45,16 @@ function makePageEnvelope(contractVersion: string, nextChangeAt?: string) {
   };
 }
 
-const STALE_BOUNDARY =
-  new Date(Date.now() - 60 * 1000).toISOString();
-const FUTURE_BOUNDARY =
-  new Date(Date.now() + 60 * 60 * 1000).toISOString();
+const STALE_BOUNDARY = new Date(Date.now() - 60 * 1000).toISOString();
+const FUTURE_BOUNDARY = new Date(Date.now() + 60 * 60 * 1000).toISOString();
 
 describe('contract version validation', () => {
   it('accepts the supported contract version', () => {
-    expect(isSupportedContract({contractVersion: SUPPORTED})).toBe(true);
+    expect(isSupportedContract({ contractVersion: SUPPORTED })).toBe(true);
   });
 
   it('rejects unsupported contract versions', () => {
-    expect(isSupportedContract({contractVersion: '0.9'})).toBe(false);
+    expect(isSupportedContract({ contractVersion: '0.9' })).toBe(false);
     expect(isSupportedContract({})).toBe(false);
   });
 });
@@ -71,7 +69,12 @@ describe('CmsClient offline fallback', () => {
 
     const client = new CmsClient({
       baseUrl: BASE,
-      context: {platform: 'ios', market: 'MX', audience: 'guest', appVersion: '1.0.0'},
+      context: {
+        platform: 'ios',
+        market: 'MX',
+        audience: 'guest',
+        appVersion: '1.0.0',
+      },
     });
 
     await client.getHome();
@@ -84,19 +87,24 @@ describe('CmsClient offline fallback', () => {
   });
 
   it('keeps last good content available offline as a read-only fallback', async () => {
-    mockedFetchJson.mockResolvedValue(makePageEnvelope(SUPPORTED, STALE_BOUNDARY));
+    mockedFetchJson.mockResolvedValue(
+      makePageEnvelope(SUPPORTED, STALE_BOUNDARY),
+    );
     const client = new CmsClient({
       baseUrl: BASE,
-      context: {platform: 'ios', market: 'MX', audience: 'guest', appVersion: '1.0.0'},
+      context: {
+        platform: 'ios',
+        market: 'MX',
+        audience: 'guest',
+        appVersion: '1.0.0',
+      },
     });
 
     await client.getHome();
 
     // Network is gone; getHome() would normally throw, but the app reads the
     // persisted cache directly for the read-only offline surface.
-    mockedFetchJson.mockRejectedValue(
-      new CmsError('network', 'offline'),
-    );
+    mockedFetchJson.mockRejectedValue(new CmsError('network', 'offline'));
 
     const offline = await client.readCachedPage('home');
     expect(offline).not.toBeNull();
@@ -106,13 +114,16 @@ describe('CmsClient offline fallback', () => {
   });
 
   it('reports stale cache when nextChangeAt has passed', async () => {
-    mockedFetchJson.mockResolvedValue(makePageEnvelope(SUPPORTED, STALE_BOUNDARY));
-    const client = new CmsClient({baseUrl: BASE, context: {platform: 'ios'}});
+    mockedFetchJson.mockResolvedValue(
+      makePageEnvelope(SUPPORTED, STALE_BOUNDARY),
+    );
+    const client = new CmsClient({
+      baseUrl: BASE,
+      context: { platform: 'ios' },
+    });
 
     await client.getHome();
-    mockedFetchJson.mockRejectedValueOnce(
-      new CmsError('network', 'offline'),
-    );
+    mockedFetchJson.mockRejectedValueOnce(new CmsError('network', 'offline'));
 
     // Still readable as a read-only fallback, but flagged stale.
     const offline = await client.readCachedPage('home');
@@ -121,8 +132,13 @@ describe('CmsClient offline fallback', () => {
   });
 
   it('treats content as fresh while nextChangeAt is in the future', async () => {
-    mockedFetchJson.mockResolvedValue(makePageEnvelope(SUPPORTED, FUTURE_BOUNDARY));
-    const client = new CmsClient({baseUrl: BASE, context: {platform: 'ios'}});
+    mockedFetchJson.mockResolvedValue(
+      makePageEnvelope(SUPPORTED, FUTURE_BOUNDARY),
+    );
+    const client = new CmsClient({
+      baseUrl: BASE,
+      context: { platform: 'ios' },
+    });
 
     await client.getHome();
     const cached = await client.getHome();
@@ -132,7 +148,7 @@ describe('CmsClient offline fallback', () => {
   it('throws a typed error for unsupported contract versions', async () => {
     mockedFetchJson.mockResolvedValue(makePageEnvelope('9.9'));
 
-    const client = new CmsClient({baseUrl: BASE});
+    const client = new CmsClient({ baseUrl: BASE });
     await expect(client.getHome()).rejects.toThrow(CmsError);
     await expect(client.getHome()).rejects.toThrow(
       /Unsupported content contract version/,
@@ -144,7 +160,7 @@ describe('CmsClient offline fallback', () => {
       new CmsError('not-found', 'Page not found', 404),
     );
 
-    const client = new CmsClient({baseUrl: BASE});
+    const client = new CmsClient({ baseUrl: BASE });
     const err = await client.getHome().catch((e: unknown) => e);
     expect(err).toBeInstanceOf(CmsError);
     expect((err as CmsError).code).toBe('not-found');

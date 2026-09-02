@@ -14,7 +14,10 @@ import {
 
 describe('destinationResolver', () => {
   it('maps every known CMS path to an internal route', () => {
-    expect(resolveDestination('/')).toEqual({kind: 'internal', route: 'Home'});
+    expect(resolveDestination('/')).toEqual({
+      kind: 'internal',
+      route: 'Home',
+    });
     expect(resolveDestination('/menu')).toEqual({
       kind: 'internal',
       route: 'Menu',
@@ -30,11 +33,11 @@ describe('destinationResolver', () => {
   });
 
   it('accepts destinations expressed as objects (path or href)', () => {
-    expect(resolveDestination({path: '/menu'})).toEqual({
+    expect(resolveDestination({ path: '/menu' })).toEqual({
       kind: 'internal',
       route: 'Menu',
     });
-    expect(resolveDestination({href: '/menu'})).toEqual({
+    expect(resolveDestination({ href: '/menu' })).toEqual({
       kind: 'internal',
       route: 'Menu',
     });
@@ -53,18 +56,18 @@ describe('destinationResolver', () => {
     expect(resolveDestination('tel://+525500000000')).toEqual({
       kind: 'unsupported',
     });
-    expect(resolveDestination('')).toEqual({kind: 'unsupported'});
-    expect(resolveDestination(undefined)).toEqual({kind: 'unsupported'});
-    expect(
-      resolveDestination('https://user:pass@example.com/x'),
-    ).toEqual({kind: 'unsupported'});
+    expect(resolveDestination('')).toEqual({ kind: 'unsupported' });
+    expect(resolveDestination(undefined)).toEqual({ kind: 'unsupported' });
+    expect(resolveDestination('https://user:pass@example.com/x')).toEqual({
+      kind: 'unsupported',
+    });
     expect(resolveDestination('not-a-known-path')).toEqual({
       kind: 'unsupported',
     });
   });
 
   it('navigates to the mapped route for internal destinations', async () => {
-    const navigation = {navigate: jest.fn()};
+    const navigation = { navigate: jest.fn() };
     await handleDestination(navigation as never, '/menu');
     expect(navigation.navigate).toHaveBeenCalledWith('Menu');
   });

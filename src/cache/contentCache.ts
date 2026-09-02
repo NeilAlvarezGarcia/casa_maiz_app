@@ -1,4 +1,3 @@
-
 export interface CacheEntry {
   data: unknown;
   nextChangeAt?: string;
@@ -26,56 +25,61 @@ export class ContentCache {
   private readonly ttlMs: number;
   private readonly prefix: string;
 
-  constructor(options: {
-    storage?: StorageAdapter;
-    ttlMs?: number;
-    prefix?: string;
-  } = {}) {
+  constructor(
+    options: {
+      storage?: StorageAdapter;
+      ttlMs?: number;
+      prefix?: string;
+    } = {},
+  ) {
     this.storage = options.storage;
     this.ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
     this.prefix = options.prefix ?? 'cms:v1:';
   }
 
-  private isStale(entry: CacheEntry, now: number): {stale: boolean; reason?: string} {
+  private isStale(
+    entry: CacheEntry,
+    now: number,
+  ): { stale: boolean; reason?: string } {
     if (entry.nextChangeAt) {
       const boundary = Date.parse(entry.nextChangeAt);
       if (!Number.isNaN(boundary) && now >= boundary) {
-        return {stale: true, reason: 'nextChangeAt-exceeded'};
+        return { stale: true, reason: 'nextChangeAt-exceeded' };
       }
     } else if (now - Date.parse(entry.fetchedAt) > this.ttlMs) {
-      return {stale: true, reason: 'ttl-exceeded'};
+      return { stale: true, reason: 'ttl-exceeded' };
     }
-    return {stale: false};
+    return { stale: false };
   }
 
   async get(key: string): Promise<CacheRead> {
     const memoryHit = this.memory.get(key);
     if (memoryHit) {
-      return {entry: memoryHit, ...this.isStale(memoryHit, Date.now())};
+      return { entry: memoryHit, ...this.isStale(memoryHit, Date.now()) };
     }
 
     if (!this.storage) {
-      return {entry: null, stale: false};
+      return { entry: null, stale: false };
     }
 
     try {
       const raw = await this.storage.getItem(this.prefix + key);
       if (!raw) {
-        return {entry: null, stale: false};
+        return { entry: null, stale: false };
       }
       const entry = JSON.parse(raw) as CacheEntry;
 
       this.memory.set(key, entry);
-      return {entry, ...this.isStale(entry, Date.now())};
+      return { entry, ...this.isStale(entry, Date.now()) };
     } catch {
-      return {entry: null, stale: false};
+      return { entry: null, stale: false };
     }
   }
 
   async getValid(key: string): Promise<CacheRead> {
     const read = await this.get(key);
     if (read.stale) {
-      return {entry: null, stale: true, reason: read.reason};
+      return { entry: null, stale: true, reason: read.reason };
     }
     return read;
   }

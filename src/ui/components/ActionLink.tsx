@@ -1,9 +1,14 @@
 import React from 'react';
-import {Pressable, StyleSheet, type StyleProp, type ViewStyle} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import type {NavigationProp} from '@react-navigation/native';
-import {useTheme} from '../theme';
-import {ThemedText} from './Text';
+import {
+  Pressable,
+  StyleSheet,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NavigationProp } from '@react-navigation/native';
+import { useTheme } from '../theme';
+import { ThemedText } from './Text';
 import {
   handleDestination,
   type NavigatorRootParamList,
@@ -11,7 +16,10 @@ import {
 
 interface ActionLinkProps {
   label: string;
-  destination: string | {path?: string; href?: string; key?: string} | undefined;
+  destination:
+    | string
+    | { path?: string; href?: string; key?: string }
+    | undefined;
 
   variant?: 'primary' | 'ghost' | 'outline';
 
@@ -20,7 +28,6 @@ interface ActionLinkProps {
   style?: StyleProp<ViewStyle>;
   testID?: string;
 }
-
 
 export function ActionLink({
   label,
@@ -45,13 +52,13 @@ export function ActionLink({
     outline: 'transparent',
   };
 
-
-
   const border =
     variant === 'outline' || (onAccent && variant === 'ghost')
       ? {
           borderWidth: 1,
-          borderColor: onAccent ? theme.colors.textOnAccent : theme.colors.border,
+          borderColor: onAccent
+            ? theme.colors.textOnAccent
+            : theme.colors.border,
         }
       : null;
 
@@ -64,8 +71,8 @@ export function ActionLink({
     variant === 'primary' || onAccent
       ? theme.colors.textOnAccent
       : variant === 'ghost'
-        ? theme.colors.accent
-        : theme.colors.text;
+      ? theme.colors.accent
+      : theme.colors.text;
 
   return (
     <Pressable
@@ -73,14 +80,14 @@ export function ActionLink({
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={handlePress}
-      style={({pressed}) => [
+      style={({ pressed }) => [
         styles.button,
-        {backgroundColor, minHeight: theme.touchTarget},
+        { backgroundColor, minHeight: theme.touchTarget },
         border,
         pressed && styles.pressed,
         style,
       ]}>
-      <ThemedText variant="button" style={{color: textColor}}>
+      <ThemedText variant="button" style={{ color: textColor }}>
         {label}
       </ThemedText>
     </Pressable>

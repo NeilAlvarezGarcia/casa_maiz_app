@@ -1,20 +1,20 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useNavigation} from '@react-navigation/native';
-import type {NavigationProp} from '@react-navigation/native';
-import {useBootstrap} from '../../state/bootstrap';
-import {useTheme} from '../../ui/theme';
-import {ThemedText} from '../../ui/components/Text';
-import {AlertBanner} from '../shared/AlertBanner';
-import {AppUpdateBanner} from '../shared/AppUpdateBanner';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import type { NavigationProp } from '@react-navigation/native';
+import { useBootstrap } from '../../state/bootstrap';
+import { useTheme } from '../../ui/theme';
+import { ThemedText } from '../../ui/components/Text';
+import { AlertBanner } from '../shared/AlertBanner';
+import { AppUpdateBanner } from '../shared/AppUpdateBanner';
 import {
   handleDestination,
   type NavigatorRootParamList,
 } from '../../navigation/destinationResolver';
-import {useActiveRoute} from '../../navigation/activeRoute';
-import {asyncStorageAdapter} from '../../cache/storage';
-import {getAppVersion} from '../../core/context/queryContext';
+import { useActiveRoute } from '../../navigation/activeRoute';
+import { asyncStorageAdapter } from '../../cache/storage';
+import { getAppVersion } from '../../core/context/queryContext';
 import {
   alertDelayMs,
   cooldownAllows,
@@ -24,18 +24,15 @@ import {
 
 const ALERT_SHOWN_PREFIX = 'cms:v1:alertShown:';
 
-
 export function TopBar(): React.JSX.Element {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const navigation = useNavigation<NavigationProp<NavigatorRootParamList>>();
-  const {data} = useBootstrap();
+  const { data } = useBootstrap();
   const activeRoute = useActiveRoute();
   const ops = data.operationalControls;
   const [dismissed, setDismissed] = useState<Record<string, boolean>>({});
   const [cooldowns, setCooldowns] = useState<Record<string, number>>({});
-
-
 
   useEffect(() => {
     let mounted = true;
@@ -43,7 +40,9 @@ export function TopBar(): React.JSX.Element {
       const ids = data.alerts.map(a => a.id).filter((id): id is string => !!id);
       const entries = await Promise.all(
         ids.map(async id => {
-          const raw = await asyncStorageAdapter.getItem(ALERT_SHOWN_PREFIX + id);
+          const raw = await asyncStorageAdapter.getItem(
+            ALERT_SHOWN_PREFIX + id,
+          );
           const ts = raw ? Number(raw) : NaN;
           return [id, Number.isFinite(ts) ? ts : 0] as const;
         }),
@@ -63,10 +62,11 @@ export function TopBar(): React.JSX.Element {
       return;
     }
     const ts = Date.now();
-    setCooldowns(prev => ({...prev, [id]: ts}));
-    await asyncStorageAdapter.setItem(ALERT_SHOWN_PREFIX + id, String(ts)).catch(() => {});
+    setCooldowns(prev => ({ ...prev, [id]: ts }));
+    await asyncStorageAdapter
+      .setItem(ALERT_SHOWN_PREFIX + id, String(ts))
+      .catch(() => {});
   };
-
 
   const candidates = useMemo(
     () =>
@@ -78,7 +78,6 @@ export function TopBar(): React.JSX.Element {
         .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0)),
     [data.alerts, dismissed, activeRoute, cooldowns],
   );
-
 
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
   const timers = useRef<Array<ReturnType<typeof setTimeout>>>([]);
@@ -137,7 +136,7 @@ export function TopBar(): React.JSX.Element {
           }}
           onDismiss={() => {
             const id = alert.id;
-            setDismissed(prev => ({...prev, [id ?? '']: true}));
+            setDismissed(prev => ({ ...prev, [id ?? '']: true }));
             recordShown(id);
           }}
           onShown={() => {

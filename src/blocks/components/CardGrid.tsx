@@ -1,24 +1,27 @@
 import React from 'react';
-import {FlatList, StyleSheet, useWindowDimensions, View} from 'react-native';
-import type {CardGridBlock} from '../../api/types';
-import {useTheme} from '../../ui/theme';
-import {ThemedText} from '../../ui/components/Text';
-import {MediaImage} from '../../ui/components/MediaImage';
-import {SectionHeader} from './SectionHeader';
+import { FlatList, StyleSheet, useWindowDimensions, View } from 'react-native';
+import type { CardGridBlock } from '../../api/types';
+import { useTheme } from '../../ui/theme';
+import { SectionHeader } from './SectionHeader';
+import { ContentCard } from '../../ui/components/ContentCard';
+import { HIDDEN_STYLE } from '../../ui/theme/blockStyles';
 
 interface CardGridProps {
   block: CardGridBlock;
 }
 
-export function CardGrid({block}: CardGridProps): React.JSX.Element {
+export function CardGrid({ block }: CardGridProps): React.JSX.Element {
   const theme = useTheme();
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const columns = width >= 768 ? 2 : 2;
   const cardGap = theme.spacing.lg;
-  const cardWidth = Math.max(140, Math.floor((width - theme.horizontalPadding * 2 - cardGap) / columns));
+  const cardWidth = Math.max(
+    140,
+    Math.floor((width - theme.horizontalPadding * 2 - cardGap) / columns),
+  );
 
   if (!block.cards.length) {
-    return <View style={styles.hidden} />;
+    return <View style={HIDDEN_STYLE} />;
   }
 
   return (
@@ -28,32 +31,25 @@ export function CardGrid({block}: CardGridProps): React.JSX.Element {
         data={block.cards}
         key={`grid-${columns}`}
         numColumns={columns}
-        renderItem={({item}) => {
+        renderItem={({ item }) => {
           const card = item as (typeof block.cards)[number];
           return (
-            <View style={[styles.card, {width: cardWidth}]}>
-              <MediaImage media={card.image} style={styles.cardImage} width={cardWidth} />
-              <View style={styles.cardBody}>
-                {card.eyebrow ? (
-                  <ThemedText variant="eyebrow" color="muted">
-                    {card.eyebrow}
-                  </ThemedText>
-                ) : null}
-                {card.title ? (
-                  <ThemedText variant="title">{card.title}</ThemedText>
-                ) : null}
-                {card.description ? (
-                  <ThemedText variant="body" color="muted" numberOfLines={3}>
-                    {card.description}
-                  </ThemedText>
-                ) : null}
-              </View>
-            </View>
+            <ContentCard
+              image={card.image}
+              imageWidth={cardWidth}
+              cardStyle={{ width: cardWidth }}
+              eyebrow={card.eyebrow}
+              eyebrowColor="muted"
+              title={card.title}
+              description={card.description}
+              descriptionNumberOfLines={3}
+              bodyGap={4}
+            />
           );
         }}
         keyExtractor={(_, index) => String(index)}
         contentContainerStyle={styles.list}
-        columnWrapperStyle={cardGap ? {gap: cardGap} : undefined}
+        columnWrapperStyle={cardGap ? { gap: cardGap } : undefined}
         scrollEnabled={false}
         showsVerticalScrollIndicator={false}
       />
@@ -62,25 +58,11 @@ export function CardGrid({block}: CardGridProps): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  hidden: {
-    height: 0,
-  },
   section: {
     marginBottom: 20,
   },
   list: {
     paddingTop: 12,
     gap: 16,
-  },
-  card: {
-    borderRadius: 14,
-    overflow: 'hidden',
-  },
-  cardImage: {
-    borderRadius: 14,
-  },
-  cardBody: {
-    paddingVertical: 8,
-    gap: 4,
   },
 });

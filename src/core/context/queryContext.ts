@@ -1,5 +1,5 @@
-import {Platform} from 'react-native';
-import {APP_VERSION, AUDIENCE, CONTRACT_VERSION, MARKET} from '../../config';
+import { Platform } from 'react-native';
+import { APP_VERSION, AUDIENCE, CONTRACT_VERSION, MARKET } from '../../config';
 
 export function getAppVersion(): string {
   return normalizeVersion(APP_VERSION);
@@ -38,9 +38,7 @@ export function buildDeliveryQuery(): DeliveryQuery {
   };
 }
 
-export function deliveryQueryToSearchParams(
-  query: DeliveryQuery,
-): string {
+export function deliveryQueryToSearchParams(query: DeliveryQuery): string {
   const parts = [
     ['platform', query.platform],
     ['market', query.market],
@@ -55,4 +53,4 @@ export function deliveryQueryToSearchParams(
     .join('&');
 }
 
-export {CONTRACT_VERSION};
+export { CONTRACT_VERSION };

@@ -4,7 +4,7 @@
  * Unit tests for the content cache's expiration semantics (server-provided
  * nextChangeAt boundary vs. TTL fallback) and its persistence layer.
  */
-import {ContentCache, type StorageAdapter} from '../src/cache/contentCache';
+import { ContentCache, type StorageAdapter } from '../src/cache/contentCache';
 
 class MemoryStorage implements StorageAdapter {
   private store = new Map<string, string>();
@@ -26,7 +26,7 @@ const HOUR_MS = 60 * 60 * 1000;
 
 function entry(nextChangeAt?: string, fetchedAt?: string) {
   return {
-    data: {ok: true},
+    data: { ok: true },
     nextChangeAt,
     fetchedAt: fetchedAt ?? new Date().toISOString(),
   };
@@ -42,7 +42,7 @@ describe('ContentCache', () => {
   });
 
   it('returns valid content with no expiry field until the TTL elapses', async () => {
-    const cache = new ContentCache({storage: new MemoryStorage()});
+    const cache = new ContentCache({ storage: new MemoryStorage() });
     await cache.set('page:home', entry());
 
     let read = await cache.get('page:home');
@@ -57,7 +57,7 @@ describe('ContentCache', () => {
   });
 
   it('stays fresh while nextChangeAt is in the future', async () => {
-    const cache = new ContentCache({storage: new MemoryStorage()});
+    const cache = new ContentCache({ storage: new MemoryStorage() });
     const future = new Date(Date.now() + HOUR_MS).toISOString();
     await cache.set('page:home', entry(future));
 
@@ -66,7 +66,7 @@ describe('ContentCache', () => {
   });
 
   it('flags content stale once the nextChangeAt boundary passes', async () => {
-    const cache = new ContentCache({storage: new MemoryStorage()});
+    const cache = new ContentCache({ storage: new MemoryStorage() });
     const past = new Date(Date.now() - 1).toISOString();
     await cache.set('page:home', entry(past));
 
@@ -76,7 +76,7 @@ describe('ContentCache', () => {
   });
 
   it('getValid treats stale content as a miss (network refresh needed)', async () => {
-    const cache = new ContentCache({storage: new MemoryStorage()});
+    const cache = new ContentCache({ storage: new MemoryStorage() });
     const past = new Date(Date.now() - 1).toISOString();
     await cache.set('page:home', entry(past));
 
@@ -87,13 +87,13 @@ describe('ContentCache', () => {
 
   it('persists entries into storage and restores them across instances', async () => {
     const storage = new MemoryStorage();
-    const first = new ContentCache({storage});
+    const first = new ContentCache({ storage });
     await first.set('page:menu', entry());
 
     // A brand-new cache instance (e.g. after app restart) reads from storage.
-    const second = new ContentCache({storage});
+    const second = new ContentCache({ storage });
     const read = await second.get('page:menu');
-    expect(read.entry?.data).toEqual({ok: true});
+    expect(read.entry?.data).toEqual({ ok: true });
     expect(read.stale).toBe(false);
   });
 

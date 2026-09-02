@@ -1,18 +1,24 @@
 import React from 'react';
-import {RefreshControl, ScrollView, StyleSheet} from 'react-native';
-import {CmsClient} from '../../api/cmsClient';
-import {useLegalContent} from '../hooks/useLegalContent';
-import {useTheme} from '../../ui/theme';
-import {ThemedText} from '../../ui/components/Text';
-import {LoadingState, ErrorState, EmptyState} from '../../ui/components/StateViews';
+import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
+import { CmsClient } from '../../api/cmsClient';
+import { useLegalContent } from '../hooks/useLegalContent';
+import { useTheme } from '../../ui/theme';
+import { ThemedText } from '../../ui/components/Text';
+import {
+  LoadingState,
+  ErrorState,
+  EmptyState,
+} from '../../ui/components/StateViews';
 
 interface PrivacyScreenProps {
   client: CmsClient;
 }
 
-export function PrivacyScreen({client}: PrivacyScreenProps): React.JSX.Element {
+export function PrivacyScreen({
+  client,
+}: PrivacyScreenProps): React.JSX.Element {
   const theme = useTheme();
-  const {state, refresh} = useLegalContent(client, 'privacy_policy');
+  const { state, refresh } = useLegalContent(client, 'privacy_policy');
 
   if (state.status === 'loading') {
     return <LoadingState label="Cargando aviso de privacidad…" />;
@@ -35,11 +41,11 @@ export function PrivacyScreen({client}: PrivacyScreenProps): React.JSX.Element {
 
   return (
     <ScrollView
-      style={[styles.scroll, {backgroundColor: theme.colors.background}]}
+      style={[styles.scroll, { backgroundColor: theme.colors.background }]}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={[
         styles.content,
-        {paddingHorizontal: theme.horizontalPadding},
+        { paddingHorizontal: theme.horizontalPadding },
       ]}
       refreshControl={
         <RefreshControl
@@ -59,7 +65,11 @@ export function PrivacyScreen({client}: PrivacyScreenProps): React.JSX.Element {
         <EmptyState label="Este documento aún no tiene contenido." />
       ) : (
         state.body.map((paragraph, i) => (
-          <ThemedText key={i} variant="body" color="muted" style={styles.paragraph}>
+          <ThemedText
+            key={i}
+            variant="body"
+            color="muted"
+            style={styles.paragraph}>
             {paragraph}
           </ThemedText>
         ))
