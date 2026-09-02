@@ -7,6 +7,7 @@ import { ReservationsScreen } from '../features/reservations/ReservationsScreen'
 import { PrivacyScreen } from '../features/privacy/PrivacyScreen';
 import { useBootstrap } from '../state/bootstrap';
 import { useTheme } from '../ui/theme';
+import { useReducedTransparency } from '../core/hooks/useReducedTransparency';
 import type { CmsClient } from '../api/cmsClient';
 import { ROUTE_MAP } from './destinationResolver';
 
@@ -36,6 +37,14 @@ export function RootNavigator({
   const theme = useTheme();
   const bootstrap = useBootstrap();
   const items = bootstrap.data.navigation?.items ?? [];
+  const reducedTransparency = useReducedTransparency();
+
+  const glass = !theme.isAndroid && !reducedTransparency;
+  const tabBarBackground = glass
+    ? theme.isDark
+      ? 'rgba(20,18,16,0.72)'
+      : 'rgba(255,255,255,0.72)'
+    : theme.colors.surface;
 
   const cmsTabs = items
     .map(item => {
@@ -60,7 +69,7 @@ export function RootNavigator({
         tabBarStyle: [
           styles.tabBar,
           {
-            backgroundColor: theme.colors.surface,
+            backgroundColor: tabBarBackground,
             borderTopColor: theme.colors.border,
             height: Platform.OS === 'ios' ? 82 : 64,
           },

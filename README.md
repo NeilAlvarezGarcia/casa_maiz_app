@@ -16,10 +16,11 @@ from the CMS and are validated against a typed content contract.
 ### Prerequisites
 
 Follow the React Native environment setup guide for iOS and Android. Then
-install dependencies:
+install dependencies (the project uses `react-native-device-info`, which has an
+iOS native pod, so `pod install` is required):
 
 ```bash
-npm install
+npm install --legacy-peer-deps
 cd ios && bundle install && pod install && cd ..
 ```
 
@@ -63,7 +64,7 @@ API_BASE_URL=http://10.0.2.2:3000 npm run android
 ```bash
 npm run lint       # ESLint (zero-warning config for app code)
 npx tsc --noEmit   # TypeScript type check
-npm test           # Jest unit tests (46 tests)
+npm test           # Jest unit tests (50 tests)
 ```
 
 ### Configuration
@@ -80,7 +81,7 @@ overrides the matching `.env` key, so
 | Variable | Purpose | Default |
 | --- | --- | --- |
 | `API_BASE_URL` | Point the app at a local tunnel, staging, or prod | `https://payload-cms-poc-seven.vercel.app` |
-| `APP_VERSION` | App version reported as `appVersion` context (semantic `x.y.z`) | `1.0.0` |
+| `APP_VERSION` | Fallback app version reported as `appVersion` context (semantic `x.y.z`). On a real device the native installed version is preferred (see below) | `1.0.0` |
 | `MARKET` | Delivery context market sent on every content request | `MX` |
 | `AUDIENCE` | Delivery context audience sent on every content request | `guest` |
 | `CONTRACT_VERSION` | Mobile content contract version this build supports | `1.1` |
@@ -96,6 +97,7 @@ re-inlined: `npm start -- --reset-cache`.
 src/
   config/            build-time constants (Zod-validated .env values)
   core/context/      query context construction (platform/market/audience/version)
+  core/hooks/        useReducedTransparency (iOS Reduce Transparency → glass fallback)
   api/
     schemas/
       index.ts       envelope + block union schema (catch-all evaluated last)
@@ -119,8 +121,9 @@ src/
       CardGrid.tsx, Carousel.tsx, PromoRail.tsx, ImageBlock.tsx,
       SectionHeader.tsx (shared), UnknownBlock.tsx (safe fallback)
   navigation/
-    RootNavigator.tsx      bootstrap-driven bottom tabs with glyph icons
+    RootNavigator.tsx      bootstrap-driven bottom tabs + iOS glass surface
     destinationResolver.ts CMS path → route map + external URL validation
+    deepLink.ts            deep-link config derived from ROUTE_MAP (scheme + host)
     activeRoute.tsx        ActiveRouteProvider, useActiveRoute()
   state/
     bootstrap.tsx   BootstrapProvider, useBootstrap(), useFeatureFlag()
@@ -173,7 +176,7 @@ App.tsx              SafeAreaProvider > ActiveRoute > NavContainer > Bootstrap >
 
 ## Tests
 
-`__tests__/` covers the assessment-required scenarios across 6 suites:
+`__tests__/` covers the assessment-required scenarios across 7 suites:
 
 - **Query context** — required query parameters are built and serialized;
   version normalization and platform detection are covered.
@@ -183,13 +186,16 @@ App.tsx              SafeAreaProvider > ActiveRoute > NavContainer > Bootstrap >
 - **Block rendering** — a successful CMS block path (`textBlock`,
   `restaurantHero`) renders; unknown and no-op blocks render safely.
 - **Cache / offline fallback** — fresh vs. stale `nextChangeAt`, TTL expiry,
-  and read-only offline fallback after the network fails.
+  read-only offline fallback after the network fails, and `clear()` wiping
+  persisted keys.
 - **Destination resolver** — every CMS path maps to a navigation route and
   navigates correctly; external URLs are validated.
 - **Alert lifecycle** — placement, trigger delay, frequency/cooldown, and
   page-`pageSlugs` targeting are pure and unit-tested.
+- **Deep linking** — the link config is derived from `ROUTE_MAP` and covers
+  every CMS path and both prefixes.
 
-Run with `npm test` (currently 46 tests across 6 suites).
+Run with `npm test` (currently 50 tests across 7 suites).
 
 ---
 
@@ -220,6 +226,29 @@ Run with `npm test` (currently 46 tests across 6 suites).
 - **Single `CmsClient`** with central query-context construction — keeps the
   `platform/market/audience/appVersion` params, timeout, abort, and cache wiring
   in one place so every screen cannot drift.
+- **`react-native-device-info`** — reports the real installed app version as
+  `appVersion` (Android `versionName` / iOS `CFBundleShortVersionString`),
+  falling back to the build-time `APP_VERSION` constant when the native module
+  is unavailable (e.g. Jest). It is a small native module that autolinks on both
+  platforms; iOS requires a `pod install` after adding it.
+
+## Deep linking (optional bonus)
+
+The app registers a custom URL scheme (`casamaiz://`) plus the published CMS
+host so links like `casamaiz:///menu` or `https://…/menu` open the matching tab.
+The path→route mapping is **derived from the same `ROUTE_MAP`** used for in-app
+destinations (see `src/navigation/deepLink.ts`), so the two can't drift. Unknown
+paths are ignored rather than crashing. Configuring native verification (e.g.
+Universal Links `apple-app-site-association` / Android App Links) for a real
+domain is a deployment step for a future release.
+
+## Accessibility / platform notes
+
+- The iOS tab bar uses a translucent "glass" surface; when the OS **Reduce
+  Transparency** setting is enabled it falls back to an opaque surface
+  (`useReducedTransparency`, iOS-only). Android keeps a solid Material surface.
+- Android back behavior uses React Navigation's `backBehavior="firstRoute"`.
+- Scroll-triggered alerts: see "Known limitations".
 
 ## Known limitations
 
@@ -227,17 +256,12 @@ Run with `npm test` (currently 46 tests across 6 suites).
   chrome (a scroll% isn't easily measurable above the tab navigator); the
   `delayMs` still applies. Frequency/cooldown, placement, page targeting,
   dismissal, and actions are fully honoured.
-- **`appVersion` context** reports `APP_VERSION` from `.env` (default `1.0.0`)
-  rather than the native installed version. Wiring it to the OS build number is
-  a small future change (`react-native-device-info` or the native
-  `BuildConfig`/`CFBundleShortVersionString`).
-- **Deep links** (optional bonus) are not implemented.
 - **iOS CocoaPods are not committed/installed by default**; run
   `cd ios && bundle install && pod install` once. The app was verified by
   type-check, lint, and tests; builds on the iOS simulator require that step.
-- **`ContentCache.clear()` is in-memory only** — persistent keys are not
-  enumerated (AsyncStorage has no prefix listing), so a programmatic
-  "clear all" keeps persistent copies until overwritten.
+- **`ContentCache.clear()`** now removes persisted keys via the storage
+  adapter's `keys()` (`AsyncStorage.getAllKeys()`), so a programmatic "clear
+  all" forgets persistent copies too, not only the in-memory map.
 
 ## License
 

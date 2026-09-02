@@ -1,7 +1,12 @@
 import { Platform } from 'react-native';
+import { getVersion } from 'react-native-device-info';
 import { APP_VERSION, AUDIENCE, CONTRACT_VERSION, MARKET } from '../../config';
 
 export function getAppVersion(): string {
+  const native = getVersion();
+  if (typeof native === 'string' && native.length > 0) {
+    return normalizeVersion(native);
+  }
   return normalizeVersion(APP_VERSION);
 }
 

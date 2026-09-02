@@ -11,6 +11,9 @@ export const asyncStorageAdapter: StorageAdapter = {
   async removeItem(key: string): Promise<void> {
     await AsyncStorage.removeItem(key);
   },
+  async keys(): Promise<readonly string[]> {
+    return AsyncStorage.getAllKeys();
+  },
 };
 
 export function createMemoryStorageAdapter(): StorageAdapter & {
@@ -25,6 +28,7 @@ export function createMemoryStorageAdapter(): StorageAdapter & {
     removeItem: async (key: string) => {
       store.delete(key);
     },
+    keys: async () => Array.from(store.keys()),
     snapshot: () => Object.fromEntries(store),
   };
 }

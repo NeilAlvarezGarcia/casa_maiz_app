@@ -11,6 +11,10 @@ import mockAsyncStorage from '@react-native-async-storage/async-storage/jest/asy
 
 jest.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage);
 
+jest.mock('react-native-device-info', () => ({
+  getVersion: jest.fn(() => '1.0.0'),
+}));
+
 // Silence react-native-screens' native setup in tests.
 jest.mock('react-native-screens', () => {
   const Actual = jest.requireActual('react-native-screens');

@@ -15,6 +15,7 @@ export interface StorageAdapter {
   getItem(key: string): Promise<string | null>;
   setItem(key: string, value: string): Promise<void>;
   removeItem(key: string): Promise<void>;
+  keys?(): Promise<readonly string[]>;
 }
 
 const DEFAULT_TTL_MS = 30 * 60 * 1000;
@@ -108,7 +109,10 @@ export class ContentCache {
 
   async clear(): Promise<void> {
     this.memory.clear();
-    // NOTE: AsyncStorage keys are not enumerated here; clear() is in-memory
-    // only unless a dedicated clearing routine is added.
+    if (this.storage?.keys) {
+      const keys = await this.storage.keys();
+      const matching = keys.filter(k => k.startsWith(this.prefix));
+      await Promise.all(matching.map(k => this.storage!.removeItem(k)));
+    }
   }
 }

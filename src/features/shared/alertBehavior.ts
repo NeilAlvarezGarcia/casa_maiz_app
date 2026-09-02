@@ -6,12 +6,7 @@ export function isTopBarPlacement(alert: Alert): boolean {
 }
 
 export function alertDelayMs(alert: Alert): number {
-  const trigger = alert.trigger;
-
-  if (!trigger || trigger.type === 'scroll') {
-    return trigger?.delayMs ?? 0;
-  }
-  return trigger.delayMs ?? 0;
+  return alert.trigger?.delayMs ?? 0;
 }
 
 function cooldownMs(alert: Alert): number {

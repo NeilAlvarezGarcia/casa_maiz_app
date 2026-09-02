@@ -7,6 +7,7 @@ import { BootstrapProvider, useBootstrap } from './src/state/bootstrap';
 import { ThemeProvider, useTheme } from './src/ui/theme';
 import { TopBar } from './src/features/shared/TopBar';
 import { RootNavigator } from './src/navigation/RootNavigator';
+import { linking } from './src/navigation/deepLink';
 import { LoadingState } from './src/ui/components/StateViews';
 import {
   ActiveRouteProvider,
@@ -55,6 +56,7 @@ function App(): React.JSX.Element {
     <SafeAreaProvider>
       <ActiveRouteProvider value={activeRoute}>
         <NavigationContainer
+          linking={linking}
           onStateChange={state => setActiveRoute(focusedRouteName(state))}>
           <BootstrapProvider client={client}>
             <ThemeProvider>

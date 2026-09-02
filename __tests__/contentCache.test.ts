@@ -20,6 +20,10 @@ class MemoryStorage implements StorageAdapter {
   async removeItem(key: string): Promise<void> {
     this.store.delete(key);
   }
+
+  async keys(): Promise<string[]> {
+    return Array.from(this.store.keys());
+  }
 }
 
 const HOUR_MS = 60 * 60 * 1000;
@@ -102,5 +106,22 @@ describe('ContentCache', () => {
     const read = await cache.get('page:missing');
     expect(read.entry).toBeNull();
     expect(read.stale).toBe(false);
+  });
+
+  it('clear() removes persisted keys, not only the in-memory map', async () => {
+    const storage = new MemoryStorage();
+    const cache = new ContentCache({ storage, prefix: 'cms:v1:' });
+    await cache.set('page:home', entry());
+    await cache.set('page:menu', entry());
+
+    await storage.setItem('other:key', 'keep');
+
+    await cache.clear();
+
+    const read = await cache.get('page:home');
+    expect(read.entry).toBeNull();
+    const fresh = new ContentCache({ storage, prefix: 'cms:v1:' });
+    expect((await fresh.get('page:menu')).entry).toBeNull();
+    expect(await storage.getItem('other:key')).toBe('keep');
   });
 });
