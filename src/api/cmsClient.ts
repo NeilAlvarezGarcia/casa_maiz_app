@@ -105,6 +105,23 @@ export class CmsClient {
     }
 
     const envelope = parsed.data;
+
+    const envelopeError =
+      typeof envelope.error === 'string' && envelope.error.length > 0
+        ? envelope.error
+        : Array.isArray(envelope.errors) && envelope.errors.length > 0
+        ? envelope.errors
+            .map(e => (e as { message?: string } | null)?.message)
+            .filter((m): m is string => typeof m === 'string' && m.length > 0)
+            .join('; ')
+        : undefined;
+    if (envelopeError) {
+      throw new CmsError(
+        'invalid-response',
+        `Content server reported an error for "${slug}": ${envelopeError}`,
+      );
+    }
+
     if (!isSupportedContract(envelope)) {
       throw new CmsError(
         'unsupported-contract',

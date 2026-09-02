@@ -165,4 +165,42 @@ describe('CmsClient offline fallback', () => {
     expect(err).toBeInstanceOf(CmsError);
     expect((err as CmsError).code).toBe('not-found');
   });
+
+  it('surfaces an explicit server-reported error from the envelope', async () => {
+    mockedFetchJson.mockResolvedValue({
+      ...makePageEnvelope(SUPPORTED),
+      error: 'content could not be generated',
+    });
+
+    const client = new CmsClient({ baseUrl: BASE });
+    const err = await client.getHome().catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(CmsError);
+    expect((err as CmsError).code).toBe('invalid-response');
+    expect((err as CmsError).message).toMatch(/content could not be generated/);
+  });
+
+  it('surfaces the first server-reported error message from the errors array', async () => {
+    mockedFetchJson.mockResolvedValue({
+      ...makePageEnvelope(SUPPORTED),
+      errors: [{ message: 'l10n unavailable' }],
+    });
+
+    const client = new CmsClient({ baseUrl: BASE });
+    const err = await client.getHome().catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(CmsError);
+    expect((err as CmsError).code).toBe('invalid-response');
+    expect((err as CmsError).message).toMatch(/l10n unavailable/);
+  });
+
+  it('rejects an envelope with unrecognized keys', async () => {
+    mockedFetchJson.mockResolvedValue({
+      ...makePageEnvelope(SUPPORTED),
+      unexpectedMeta: 'should-not-pass',
+    });
+
+    const client = new CmsClient({ baseUrl: BASE });
+    const err = await client.getHome().catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(CmsError);
+    expect((err as CmsError).code).toBe('invalid-response');
+  });
 });

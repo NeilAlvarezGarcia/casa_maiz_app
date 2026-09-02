@@ -25,53 +25,45 @@ const richTextSchema = z.object({
     .optional(),
 });
 
-const mediaSizeSchema = z
-  .object({
-    url: z.string().optional(),
-    width: z.number().optional(),
-    height: z.number().optional(),
-  })
-  .passthrough();
+const mediaSizeSchema = z.looseObject({
+  url: z.string().optional(),
+  width: z.number().optional(),
+  height: z.number().optional(),
+});
 
-export const mediaSchema = z
-  .object({
-    url: z.string().optional(),
-    alt: z.string().optional(),
-    width: z.number().optional(),
-    height: z.number().optional(),
-    filename: z.string().optional(),
-    sizes: z
-      .object({
-        thumbnail: mediaSizeSchema.optional(),
-        square: mediaSizeSchema.optional(),
-        small: mediaSizeSchema.optional(),
-        medium: mediaSizeSchema.optional(),
-        large: mediaSizeSchema.optional(),
-        xlarge: mediaSizeSchema.optional(),
-        og: mediaSizeSchema.optional(),
-      })
-      .optional(),
-    caption: richTextSchema.optional(),
-  })
-  .passthrough();
+export const mediaSchema = z.looseObject({
+  url: z.string().optional(),
+  alt: z.string().optional(),
+  width: z.number().optional(),
+  height: z.number().optional(),
+  filename: z.string().optional(),
+  sizes: z
+    .object({
+      thumbnail: mediaSizeSchema.optional(),
+      square: mediaSizeSchema.optional(),
+      small: mediaSizeSchema.optional(),
+      medium: mediaSizeSchema.optional(),
+      large: mediaSizeSchema.optional(),
+      xlarge: mediaSizeSchema.optional(),
+      og: mediaSizeSchema.optional(),
+    })
+    .optional(),
+  caption: richTextSchema.optional(),
+});
 
-export const destinationSchema = z
-  .object({
-    key: z.string().optional(),
-    label: z.string().optional(),
-    path: z.string().optional(),
-    href: z.string().optional(),
-    supportedPlatforms: z.array(z.string()).optional(),
-  })
-  .passthrough();
+export const destinationSchema = z.looseObject({
+  key: z.string().optional(),
+  label: z.string().optional(),
+  path: z.string().optional(),
+  href: z.string().optional(),
+  supportedPlatforms: z.array(z.string()).optional(),
+});
 
-export const ctaSchema = z
-  .object({
-    label: z.string().optional(),
-    destination: destinationSchema.optional(),
-    href: z.string().optional(),
-  })
-  .passthrough();
+export const ctaSchema = z.looseObject({
+  label: z.string().optional(),
+  destination: destinationSchema.optional(),
+  href: z.string().optional(),
+});
 
 export type Media = z.infer<typeof mediaSchema>;
 export type Destination = z.infer<typeof destinationSchema>;

@@ -7,7 +7,7 @@ from the CMS and are validated against a typed content contract.
 
 - **Platforms:** iOS & Android (React Native CLI, not Expo)
 - **CMS API:** `https://payload-cms-poc-seven.vercel.app` (content contract `1.1`)
-- **Stack:** React Native 0.76, React Navigation 7, Zod, AsyncStorage
+- **Stack:** React Native 0.76, React Navigation 7, Zod 4, AsyncStorage
 
 ---
 
@@ -15,8 +15,8 @@ from the CMS and are validated against a typed content contract.
 
 ### Prerequisites
 
-Follow the React Native [environment setup](https://reactnative.dev/docs/set-up-your-environment)
-for iOS and Android. Then install dependencies:
+Follow the React Native environment setup guide for iOS and Android. Then
+install dependencies:
 
 ```bash
 npm install
@@ -63,7 +63,7 @@ API_BASE_URL=http://10.0.2.2:3000 npm run android
 ```bash
 npm run lint       # ESLint (zero-warning config for app code)
 npx tsc --noEmit   # TypeScript type check
-npm test           # Jest unit tests (43 tests)
+npm test           # Jest unit tests (46 tests)
 ```
 
 ### Configuration
@@ -94,49 +94,75 @@ re-inlined: `npm start -- --reset-cache`.
 
 ```
 src/
-  config/            build-time constants
+  config/            build-time constants (Zod-validated .env values)
   core/context/      query context construction (platform/market/audience/version)
   api/
-    schemas/         zod schemas: envelope, blocks, media, destinations
-    transport.ts     fetch wrapper: timeout, CmsError mapping, abort
+    schemas/
+      index.ts       envelope + block union schema (catch-all evaluated last)
+      blocks.ts      individual block schemas (14 block types + unknownBlock)
+      bootstrap.ts   bootstrap schemas (nav, alerts, promotions, feature flags)
+      shared.ts      media, destination, CTA, rich-text, contract version
+    transport.ts     fetch wrapper: 15s timeout, CmsError codes, abort
     cmsClient.ts     typed client: endpoints, contract validation, cache wiring
-    clientSingleton.ts
-  cache/             ContentCache (memory + AsyncStorage, nextChangeAt/TTL)
-  ui/                theme (dark/light + CMS accent), Text, MediaImage, states
-  blocks/            BlockRenderer registry + per-block components
-  navigation/        destination resolver + tab navigator + active-route tracking
-  state/             bootstrap provider (nav items, alerts, accent, update, flags)
+    clientSingleton.ts   getCmsClient() singleton, createTestCmsClient() for tests
+    types.ts         inferred Zod types for blocks, page data, layout
+  cache/
+    contentCache.ts  in-memory Map + AsyncStorage adapter, 30 min TTL
+    storage.ts       asyncStorageAdapter + createMemoryStorageAdapter()
+  ui/
+    theme/           light/dark palettes, CMS-driven accent, spacing, blockStyles
+    components/      Text, ActionLink, ContentCard, MediaImage, StateViews
+  blocks/
+    BlockRenderer.tsx  data-driven registry: 7 rendered blocks + 5 no-ops + UnknownBlock fallback
+    components/
+      RestaurantHero.tsx, TextBlock.tsx, RestaurantCta.tsx,
+      CardGrid.tsx, Carousel.tsx, PromoRail.tsx, ImageBlock.tsx,
+      SectionHeader.tsx (shared), UnknownBlock.tsx (safe fallback)
+  navigation/
+    RootNavigator.tsx      bootstrap-driven bottom tabs with glyph icons
+    destinationResolver.ts CMS path → route map + external URL validation
+    activeRoute.tsx        ActiveRouteProvider, useActiveRoute()
+  state/
+    bootstrap.tsx   BootstrapProvider, useBootstrap(), useFeatureFlag()
   features/
-    hooks/           usePageData, useLegalContent
-    shared/          PageScreen, TopBar, banners, alertBehavior (trigger/cooldown)
-    home|menu|privacy|reservations/
-      home/HomeModules.tsx   bootstrap promotions + feature-flagged modules
-App.tsx              SafeAreaProvider > route tracking > providers > tabs
+    home/           HomeScreen + HomeModules (promotions + feature-flagged modules)
+    menu/           MenuScreen
+    reservations/   ReservationsScreen (static placeholder)
+    privacy/        PrivacyScreen (legal content)
+    hooks/          usePageData (page loading state machine), useLegalContent
+    shared/         PageScreen, AlertBanner, AppUpdateBanner, StaleBanner,
+                    alertBehavior (placement/delay/cooldown), TopBar
+App.tsx              SafeAreaProvider > ActiveRoute > NavContainer > Bootstrap > Theme > tabs
 ```
 
 ### CMS content flow
 
 1. **Bootstrap** (`/api/content/v1/bootstrap`) loads first. It supplies:
-   navigation tabs, in-app alert banners, visual default (accent color), and
-   app-update information. Navigation and banners are driven by it.
+   navigation tabs, in-app alert banners, visual default (accent color),
+   operational controls, feature flags, and app-update information. Navigation
+   and banners are driven by it.
 2. **Pages** (`/api/content/v1/pages/{slug}`) load per tab. Every request
    carries `platform`, `market=MX`, `audience=guest`, and `appVersion`.
-3. **Blocks** render through `BlockRenderer`, a data-driven registry. Unknown
-   or future block types render a safe `UnknownBlock` placeholder instead of
-   crashing (covered by the automated unknown-block test).
+3. **Blocks** render through `BlockRenderer`, a data-driven registry mapping
+   `blockType` strings to components. Seven block types are fully implemented
+   (`restaurantHero`, `textBlock`, `restaurantCTA`, `cardGrid`, `carousel`,
+   `promoRail`, `imageBlock`); five more are registered as safe no-ops
+   (`cta`, `content`, `mediaBlock`, `archive`, `formBlock`); any unknown or
+   future block type renders a safe `UnknownBlock` placeholder — never crashes.
 4. **Destinations** (block actions, alert CTAs, promotions) resolve through
    `navigation/destinationResolver.ts` — a single map of CMS paths to routes,
    with external URLs validated before opening.
 
 ### Resilience
 
-- **Contract validation:** responses are parsed with Zod; unsupported content
+- **Contract validation:** responses are parsed with Zod 4; unsupported content
   contract versions surface as typed `unsupported-contract` errors rather than
-  crashing.
-- **Caching/offline:** every successful response is persisted (`nextChangeAt`
-  honoured, TTL fallback). When a page is stale or the network is down, the
-  last good content remains readable as a read-only fallback and is flagged
-  with a "stale" banner; pull-to-refresh retries.
+  crashing. The block union uses `z.union` with the catch-all evaluated last
+  (Zod 4 rejects `z.discriminatedUnion` with a plain `z.string()` discriminator).
+- **Caching/offline:** every successful response is persisted in memory and
+  AsyncStorage (`nextChangeAt` honoured, 30-minute TTL fallback). When a page
+  is stale or the network is down, the last good content remains readable as a
+  read-only fallback and is flagged with a "stale" banner; pull-to-refresh retries.
 - **State handling:** loading, error (retry), empty, and offline states are
   rendered consistently via `StateViews`.
 - **Accessibility:** actions expose `accessibilityRole`/`accessibilityLabel`,
@@ -147,22 +173,23 @@ App.tsx              SafeAreaProvider > route tracking > providers > tabs
 
 ## Tests
 
-`__tests__/` covers the assessment-required scenarios:
+`__tests__/` covers the assessment-required scenarios across 6 suites:
 
-- **Query context** — required query parameters are built and serialized.
+- **Query context** — required query parameters are built and serialized;
+  version normalization and platform detection are covered.
 - **Contract validation** — supported vs. unsupported contract versions.
+- **CMS client** — cache serving, offline fallback, stale detection,
+  error mapping (404, server errors, unknown keys).
 - **Block rendering** — a successful CMS block path (`textBlock`,
-  `restaurantHero`) renders.
-- **Unknown blocks** — unknown/future block types render safely, and
-  documented-but-unimplemented blocks render a safe no-op.
+  `restaurantHero`) renders; unknown and no-op blocks render safely.
 - **Cache / offline fallback** — fresh vs. stale `nextChangeAt`, TTL expiry,
   and read-only offline fallback after the network fails.
-- **Bootstrap-driven behavior** — every CMS path maps to a navigation route and
-  navigates correctly.
+- **Destination resolver** — every CMS path maps to a navigation route and
+  navigates correctly; external URLs are validated.
 - **Alert lifecycle** — placement, trigger delay, frequency/cooldown, and
   page-`pageSlugs` targeting are pure and unit-tested.
 
-Run with `npm test` (currently 43 tests across 6 suites).
+Run with `npm test` (currently 46 tests across 6 suites).
 
 ---
 
@@ -170,8 +197,8 @@ Run with `npm test` (currently 43 tests across 6 suites).
 
 - **React Native CLI + TypeScript** — required by the brief; rejects Expo. The
   template's default `tsconfig.json` is used (`types: ["react-native", "jest"]`).
-- **Zod** for runtime validation — the CMS contract is only typed by the
-  integration, so every response is parsed. A version bump to zod 4 changed
+- **Zod 4** for runtime validation — the CMS contract is only typed by the
+  integration, so every response is parsed. The v4 migration changed
   `z.discriminatedUnion` semantics (a catch-all with a plain `z.string()`
   discriminator is rejected), so the block union uses `z.union` with the
   catch-all evaluated last. This is load-bearing: it is what prevents a

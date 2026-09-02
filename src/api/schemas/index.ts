@@ -16,17 +16,15 @@ import {
   unknownBlockSchema,
 } from './blocks';
 
-export const contractEnvelopeSchema = z
-  .object({
-    contractVersion: z.string().optional(),
-    data: z.unknown().optional(),
-    nextChangeAt: z.string().optional(),
-    preview: z.boolean().optional(),
-    resolvedContext: z.unknown().optional(),
-    error: z.string().optional(),
-    errors: z.array(z.unknown()).optional(),
-  })
-  .passthrough();
+export const contractEnvelopeSchema = z.strictObject({
+  contractVersion: z.string().optional(),
+  data: z.unknown().optional(),
+  nextChangeAt: z.string().optional(),
+  preview: z.boolean().optional(),
+  resolvedContext: z.unknown().optional(),
+  error: z.string().optional(),
+  errors: z.array(z.unknown()).optional(),
+});
 
 export const payloadBlockSchema = z.union([
   restaurantHeroSchema,
@@ -44,21 +42,17 @@ export const payloadBlockSchema = z.union([
   unknownBlockSchema,
 ]);
 
-export const pageDataSchema = z
-  .object({
-    id: z.string().optional(),
-    slug: z.string().optional(),
-    title: z.string().optional(),
-    updatedAt: z.string().optional(),
-    layout: z.array(payloadBlockSchema).default([]),
-  })
-  .passthrough();
+export const pageDataSchema = z.looseObject({
+  id: z.string().optional(),
+  slug: z.string().optional(),
+  title: z.string().optional(),
+  updatedAt: z.string().optional(),
+  layout: z.array(payloadBlockSchema).default([]),
+});
 
-export const pageResponseSchema = contractEnvelopeSchema
-  .extend({
-    data: pageDataSchema.passthrough().optional(),
-  })
-  .passthrough();
+export const pageResponseSchema = contractEnvelopeSchema.extend({
+  data: pageDataSchema.optional(),
+});
 
 export const CONTRACT_VERSION_SUPPORTED = CONTRACT_VERSION;
 
