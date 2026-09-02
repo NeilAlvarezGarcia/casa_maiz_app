@@ -1,18 +1,9 @@
 import {z} from 'zod';
 import {CONTRACT_VERSION} from '../../config';
 
-/**
- * Runtime validation schemas for the versioned CMS content contract (1.1).
- *
- * These schemas validate only the fields the application uses and are tolerant
- * of non-breaking additions (unknown keys pass through via passthrough where
- * useful). They are deliberately permissive about data that is optional or
- * may be absent from payloads the server has filtered for the context.
- */
 
 export const supportedContractVersion = CONTRACT_VERSION;
 
-/** Payload rich-text node — we only render paragraph text in this scope. */
 type RichTextNode = {
   type?: string;
   text?: string;
@@ -43,11 +34,6 @@ const mediaSizeSchema = z
   })
   .passthrough();
 
-/**
- * A Payload media object. `url` may be an absolute CDN URL or a relative
- * payload path; `sizes` holds responsive variants. All fields optional so a
- * partial or empty media object never crashes the app.
- */
 export const mediaSchema = z
   .object({
     url: z.string().optional(),

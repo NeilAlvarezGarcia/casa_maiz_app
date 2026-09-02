@@ -1,10 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type {StorageAdapter} from './contentCache';
 
-/**
- * AsyncStorage-backed persistence for the content cache. Kept behind a small
- * interface so tests can substitute an in-memory implementation.
- */
 export const asyncStorageAdapter: StorageAdapter = {
   async getItem(key: string): Promise<string | null> {
     return AsyncStorage.getItem(key);
@@ -17,7 +13,6 @@ export const asyncStorageAdapter: StorageAdapter = {
   },
 };
 
-/** In-memory adapter useful for tests. */
 export function createMemoryStorageAdapter(): StorageAdapter & {
   snapshot(): Record<string, string>;
 } {

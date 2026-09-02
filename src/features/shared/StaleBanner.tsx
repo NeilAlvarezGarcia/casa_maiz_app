@@ -7,11 +7,7 @@ interface StaleBannerProps {
   reason?: string;
 }
 
-/**
- * Non-blocking notice surfaced when displaying cached fallback content
- * (offline or past its nextChangeAt boundary). The content stays readable;
- * this makes the staleness visible without preventing access.
- */
+
 export function StaleBanner({reason}: StaleBannerProps): React.JSX.Element {
   const theme = useTheme();
   const label =

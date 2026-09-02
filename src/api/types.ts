@@ -17,10 +17,8 @@ export type TextBlock = z.infer<typeof textBlockSchema>;
 export type RestaurantCtaBlock = z.infer<typeof restaurantCtaSchema>;
 export type ImageBlock = z.infer<typeof imageBlockSchema>;
 
-/** A CMS layout block after parsing. Unknown blocks carry any shape. */
 export type LayoutBlock = Record<string, unknown> & {blockType: string};
 
-/** The `data` section of a page response. */
 export interface PageData {
   id?: string;
   slug?: string;

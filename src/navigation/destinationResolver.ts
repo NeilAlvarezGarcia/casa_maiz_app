@@ -2,11 +2,7 @@ import {Linking} from 'react-native';
 import {Platform} from 'react-native';
 import type {NavigationProp} from '@react-navigation/native';
 
-/**
- * Centralized destination resolution. Every CMS action/destination (from
- * bootstrap navigation, blocks, alerts, promotions) routes through here so the
- * app knows the full universe of destinations and how to navigate to each one.
- */
+
 
 export type NavigatorRootParamList = {
   Home: undefined;
@@ -35,19 +31,16 @@ export interface ResolutionResult {
 const HTTPS_PREFIXES = ['http://', 'https://'];
 const PROTOCOL_REGEX = /^[a-z][a-z0-9+.-]*:/i;
 
-/** Validates an external URL before it is opened. */
+
 export function isValidExternalUrl(url: string): boolean {
   if (!HTTPS_PREFIXES.some(prefix => url.startsWith(prefix))) {
     return false;
   }
-  // Reject URLs that attempt scheme confusion or include credentials.
+
   return !PROTOCOL_REGEX.test(url.replace(/^https?:\/\//i, '').split('/')[0]);
 }
 
-/**
- * Resolves a CMS destination (may be a path string, a destination object with
- * `path`, or a link with `href`) into a navigation action.
- */
+
 export function resolveDestination(
   rawDestination: string | {path?: string; href?: string; key?: string} | undefined,
 ): ResolutionResult {
@@ -61,7 +54,7 @@ export function resolveDestination(
     return {kind: 'unsupported'};
   }
 
-  // External URLs.
+
   if (HTTPS_PREFIXES.some(prefix => trimmed.startsWith(prefix))) {
     if (isValidExternalUrl(trimmed)) {
       return {kind: 'external', url: trimmed};
@@ -69,7 +62,7 @@ export function resolveDestination(
     return {kind: 'unsupported'};
   }
 
-  // Internal destination keyed by path.
+
   const mapped = ROUTE_MAP[trimmed];
   if (mapped) {
     return {kind: 'internal', route: mapped.route};
@@ -80,10 +73,7 @@ export function resolveDestination(
 
 type Navigator = NavigationProp<NavigatorRootParamList>;
 
-/**
- * Perform the resolution for the given destination and navigate accordingly.
- * Never throws: navigation and link failures fail safely.
- */
+
 export async function handleDestination(
   navigation: Navigator,
   rawDestination: string | {path?: string; href?: string; key?: string} | undefined,

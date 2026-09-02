@@ -3,11 +3,7 @@ import {ScrollView, StyleSheet, View} from 'react-native';
 import {useTheme} from '../../ui/theme';
 import {ThemedText} from '../../ui/components/Text';
 
-/**
- * Local placeholder for Reservations. No reservation transaction API is
- * documented, so this screen intentionally does not send anything to the
- * shared environment. The CTA label/destination still come from bootstrap.
- */
+
 export function ReservationsScreen(): React.JSX.Element {
   const theme = useTheme();
   return (

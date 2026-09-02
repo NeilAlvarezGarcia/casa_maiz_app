@@ -20,20 +20,12 @@ interface PageScreenProps {
   state: PageLoadState;
   onRefresh?: () => void;
   refreshing?: boolean;
-  /**
-   * Optional banner content shown above the blocks (e.g. offline/stale notice,
-   * operational notice). Kept out of the layout array because it is app-level
-   * state, not CMS content.
-   */
+
   banner?: React.ReactNode;
   testID?: string;
 }
 
-/**
- * Renders a CMS-driven screen for any page slug. All deliberate states are
- * handled here: loading, success (blocks), error + retry, empty, unsupported
- * contract, page-not-found, and pull-to-refresh.
- */
+
 export function PageScreen({
   title,
   state,

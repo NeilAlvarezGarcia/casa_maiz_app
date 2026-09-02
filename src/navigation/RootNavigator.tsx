@@ -28,12 +28,7 @@ const GLYPHS: Record<ScreenKey, string> = {
   Privacy: '\u2139',
 };
 
-/**
- * Native bottom-tab navigation driven by bootstrap.navigation.items. The tab
- * set, order, and labels come from the CMS; destinations we cannot navigate to
- * are skipped so an unsupported entry fails safely instead of crashing. A
- * bootstrap-independent fallback keeps the chrome visible during load.
- */
+
 export function RootNavigator({client}: {client: CmsClient}): React.JSX.Element {
   const theme = useTheme();
   const bootstrap = useBootstrap();
@@ -79,8 +74,6 @@ export function RootNavigator({client}: {client: CmsClient}): React.JSX.Element 
           key={tab.route}
           name={tab.route}
           options={{
-            // tabBarIcon is a render callback by React Navigation's design, so
-            // the "unstable nested component" rule doesn't apply here.
             // eslint-disable-next-line react/no-unstable-nested-components
             tabBarIcon: ({color, size}) => (
               <Text style={{color, fontSize: size, lineHeight: size}}>

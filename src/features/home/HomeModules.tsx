@@ -8,11 +8,6 @@ import {ActionLink} from '../../ui/components/ActionLink';
 import {SectionHeader} from '../../blocks/components/SectionHeader';
 import type {BootstrapPromotion} from '../../api/schemas/bootstrap';
 
-/**
- * CMS-driven Home promotions from the /bootstrap payload (the "Home
- * promotions" demonstration). Promotions carry their own placement, priority,
- * media, and CTA, all resolved through the centralized destination resolver.
- */
 export function HomePromotions(): React.JSX.Element | null {
   const {data} = useBootstrap();
   const promotions = (data.promotions ?? [])
@@ -69,12 +64,6 @@ function PromotionCard({promo}: {promo: BootstrapPromotion}): React.JSX.Element 
   );
 }
 
-/**
- * Demonstrates bootstrap feature flags changing visible UI. Each module is
- * gated by a flag from the CMS; with the live payload `show_store_locator_banner`
- * is on and `show_rewards_module` is off, so the store-locator card renders and
- * the rewards card does not. Turning a flag off/on re-renders the Home chrome.
- */
 export function FlaggedHomeModules(): React.JSX.Element | null {
   const theme = useTheme();
   const {data} = useBootstrap();
@@ -84,8 +73,7 @@ export function FlaggedHomeModules(): React.JSX.Element | null {
   const experienceLabels = new Map(
     (data.experience?.labels ?? []).map(label => [label.key, label.value]),
   );
-  // Use CMS-provided labels when the experience defines them; fall back to
-  // product chrome copy only when it does not.
+
   const reserveLabel = experienceLabels.get('reserve') ?? 'Reservar';
   const menuLabel = experienceLabels.get('menu') ?? 'Ver menú';
 
@@ -115,7 +103,7 @@ export function FlaggedHomeModules(): React.JSX.Element | null {
           <ActionLink
             label={reserveLabel}
             destination={{path: '/reservas'}}
-            variant="ghost"
+            variant="outline"
             style={styles.flagCta}
           />
         </View>
@@ -132,7 +120,7 @@ export function FlaggedHomeModules(): React.JSX.Element | null {
           <ActionLink
             label={menuLabel}
             destination={{path: '/menu'}}
-            variant="ghost"
+            variant="outline"
             style={styles.flagCta}
           />
         </View>

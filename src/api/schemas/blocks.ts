@@ -1,11 +1,6 @@
 import {z} from 'zod';
 import {ctaSchema, destinationSchema, mediaSchema} from './shared';
 
-/**
- * Schemas for the CMS layout blocks documented in contract version 1.1.
- * Unknown/missing optional fields are tolerated. Blocks the app does not yet
- * render still parse (via the generic block schema) so they never crash.
- */
 export const restaurantHeroSchema = z
   .object({
     blockType: z.literal('restaurantHero'),
@@ -150,7 +145,6 @@ export const formBlockSchema = z
   })
   .passthrough();
 
-/** Catch-all for any block shape. Unknown blocks land here. */
 export const unknownBlockSchema = z
   .object({
     blockType: z.string(),

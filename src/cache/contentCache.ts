@@ -1,16 +1,3 @@
-/**
- * Content cache with offline fallback semantics.
- *
- * Two tiers:
- *  - A short-lived in-memory map so repeated reads within a session skip the
- *    network.
- *  - Optional AsyncStorage persistence so the last successful response can be
- *    shown offline as a read-only fallback.
- *
- * Expiry honours the server-provided `nextChangeAt` boundary: cached content is
- * considered stale (still readable as fallback, but flagged) once that boundary
- * passes or once the configured TTL elapses when no boundary exists.
- */
 
 export interface CacheEntry {
   data: unknown;
@@ -21,7 +8,6 @@ export interface CacheEntry {
 
 export interface CacheRead {
   entry: CacheEntry | null;
-  /** True when the entry is stale (expired boundary/TTL) but still readable. */
   stale: boolean;
   reason?: string;
 }
@@ -78,7 +64,7 @@ export class ContentCache {
         return {entry: null, stale: false};
       }
       const entry = JSON.parse(raw) as CacheEntry;
-      // Promote back into memory so future reads are synchronous.
+
       this.memory.set(key, entry);
       return {entry, ...this.isStale(entry, Date.now())};
     } catch {

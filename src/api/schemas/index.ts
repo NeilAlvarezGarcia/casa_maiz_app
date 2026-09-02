@@ -16,10 +16,6 @@ import {
   unknownBlockSchema,
 } from './blocks';
 
-/**
- * Validates that a content response is safe to consume: the envelope carries
- * the supported contract version and a data section.
- */
 export const contractEnvelopeSchema = z
   .object({
     contractVersion: z.string().optional(),
@@ -32,13 +28,6 @@ export const contractEnvelopeSchema = z
   })
   .passthrough();
 
-/**
- * Known documented blocks plus a catch-all for anything else.
- *
- * Uses z.union rather than z.discriminatedUnion: the catch-all uses a plain
- * string discriminator, which discriminatedUnion rejects. Order matters — the
- * catch-all must be evaluated last so future/unknown block types still parse.
- */
 export const payloadBlockSchema = z.union([
   restaurantHeroSchema,
   cardGridSchema,

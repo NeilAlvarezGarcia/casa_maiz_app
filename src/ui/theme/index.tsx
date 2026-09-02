@@ -7,11 +7,7 @@ import React, {
 import {useColorScheme} from 'react-native';
 import {buildTheme, type ThemeType} from './theme';
 
-/**
- * Provides the app theme, including a CMS-controlled accent color pulled from
- * bootstrap's experience.visualDefaults.accent when available. Consumers use
- * useTheme(); nothing here is statically tied to CMS values.
- */
+
 const ThemeContext = createContext<ThemeType | null>(null);
 
 interface ThemeProviderProps {

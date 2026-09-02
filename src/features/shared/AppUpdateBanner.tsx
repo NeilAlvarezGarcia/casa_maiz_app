@@ -12,12 +12,7 @@ interface AppUpdateBannerProps {
   currentVersion: string;
 }
 
-/**
- * Presents the bootstrap operational app-update policy. `required` blocks the
- * content until the app is updated; `recommended` nudges without blocking.
- * Opening the store is stubbed to a no-op in this assessment since publishing
- * is out of scope.
- */
+
 export function AppUpdateBanner({
   policy,
   minimumVersion,
@@ -45,8 +40,8 @@ export function AppUpdateBanner({
     : (message ?? 'Hay una versión nueva disponible. Recomendamos actualizar.');
 
   const handleUpdate = () => {
-    // Publishing is out of scope; opening the store is intentionally not
-    // wired to a real destination here.
+
+
     Linking.openURL('https://example.invalid/store').catch(() => {});
   };
 

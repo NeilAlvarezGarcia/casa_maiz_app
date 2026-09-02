@@ -98,7 +98,7 @@ export function useBootstrap(): BootstrapState {
   return useContext(BootstrapContext);
 }
 
-/** Convenience selector for feature flags. */
+
 export function useFeatureFlag(key: string): boolean {
   const {data} = useBootstrap();
   return data.featureFlags[key] === true;

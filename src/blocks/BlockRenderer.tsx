@@ -9,17 +9,6 @@ import {RestaurantCta} from './components/RestaurantCta';
 import {ImageBlockComponent} from './components/ImageBlock';
 import {UnknownBlock} from './components/UnknownBlock';
 
-/**
- * Maps a parsed CMS blockType to its rendering component.
- *
- * The renderer is data-driven: adding a new documented block is a single
- * entry in this registry (plus its schema) with no screen changes. Unknown
- * types fall through to UnknownBlock instead of crashing.
- *
- * Blocks with full implementations below are live-rendered from Home/Menu.
- * Documented-but-not-yet-implemented blocks intentionally render nothing (safe
- * no-op) rather than a placeholder.
- */
 export interface BlockProps {
   block: LayoutBlock;
 }
@@ -34,8 +23,6 @@ export const BLOCK_RENDERERS: Record<string, React.ComponentType<BlockProps>> = 
   textBlock: props => <TextBlockComponent block={props.block as any} />,
   restaurantCTA: props => <RestaurantCta block={props.block as any} />,
   imageBlock: props => <ImageBlockComponent block={props.block as any} />,
-  // Documented but not present in the live Home/Menu payloads: render a safe
-  // no-op. Implementations can be added here without touching screens.
   cta: NO_OP,
   content: NO_OP,
   mediaBlock: NO_OP,

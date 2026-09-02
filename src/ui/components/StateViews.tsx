@@ -8,11 +8,7 @@ import {
 import {useTheme} from '../theme';
 import {ThemedText} from './Text';
 
-/**
- * Shared presentational states used across screens: loading, retryable error,
- * empty content, and page-not-found. User-facing errors carry a retry action
- * rather than raw technical details.
- */
+
 
 export function LoadingState({label = 'Cargando…'}: {label?: string}): React.JSX.Element {
   const theme = useTheme();

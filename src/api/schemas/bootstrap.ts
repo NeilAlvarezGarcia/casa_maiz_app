@@ -1,11 +1,6 @@
 import {z} from 'zod';
 import {destinationSchema, mediaSchema} from './shared';
 
-/**
- * Validation schemas for the /bootstrap response. Bootstrap is configuration,
- * not content, and every optional field may be null or absent — the app must
- * remain usable when any of them is missing.
- */
 
 export const bootstrapNavigationItemSchema = z
   .object({

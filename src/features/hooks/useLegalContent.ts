@@ -9,10 +9,6 @@ export type LegalState =
   | {status: 'error'; message: string; retryable: boolean}
   | {status: 'not-found'};
 
-/**
- * Loads legal content from /legal/{key}. Body paragraphs are extracted from
- * the Payload rich-text tree; unsupported node types degrade to plain text.
- */
 export function useLegalContent(
   client: CmsClient,
   key: string,

@@ -10,8 +10,8 @@ export type TextVariant =
   | 'caption'
   | 'button';
 
-// Variants intentionally use scaled (dynamic-type friendly) font sizes but
-// respect platform convention for weight.
+
+
 const variantStyles: Record<
   TextVariant,
   (dark: boolean) => TextStyle
@@ -35,10 +35,7 @@ interface ThemedTextProps extends TextProps {
   style?: TextStyle | TextStyle[];
 }
 
-/**
- * Theme-aware text. Defaults colour to the theme's primary text tone; pass
- * `color` to override. All uses scale with system font settings.
- */
+
 export function ThemedText({
   variant = 'body',
   color = 'text',

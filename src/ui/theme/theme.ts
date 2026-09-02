@@ -1,7 +1,7 @@
 import {Platform} from 'react-native';
 
 export interface ThemeColors {
-  /** Brand/opaque accents drawn from bootstrap visualDefaults when present. */
+
   accent: string;
   accentContrast: string;
   background: string;
@@ -98,7 +98,7 @@ export function buildTheme(isDark: boolean, accent?: string): ThemeType {
     fontSizes,
     isDark,
     isAndroid,
-    // iOS uses 44pt; Android uses 48dp as Material guidance.
+
     touchTarget: isAndroid ? 48 : 44,
     horizontalPadding: 20,
   };

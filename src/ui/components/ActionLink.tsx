@@ -12,22 +12,21 @@ import {
 interface ActionLinkProps {
   label: string;
   destination: string | {path?: string; href?: string; key?: string} | undefined;
-  /** Visual treatment. */
+
   variant?: 'primary' | 'ghost' | 'outline';
+
+  onAccent?: boolean;
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
   testID?: string;
 }
 
-/**
- * Renders a CMS action as a tappable button and routes it through the
- * centralized destination resolver. The block needs no knowledge of
- * navigation internals.
- */
+
 export function ActionLink({
   label,
   destination,
   variant = 'primary',
+  onAccent = false,
   onPress,
   style,
   testID,
@@ -46,11 +45,23 @@ export function ActionLink({
     outline: 'transparent',
   };
 
+
+
   const border =
-    variant === 'outline' ? {borderWidth: 1, borderColor: theme.colors.border} : null;
+    variant === 'outline' || (onAccent && variant === 'ghost')
+      ? {
+          borderWidth: 1,
+          borderColor: onAccent ? theme.colors.textOnAccent : theme.colors.border,
+        }
+      : null;
+
+  const backgroundColor =
+    onAccent && variant === 'ghost'
+      ? 'rgba(255,255,255,0.16)'
+      : backgrounds[variant];
 
   const textColor =
-    variant === 'primary'
+    variant === 'primary' || onAccent
       ? theme.colors.textOnAccent
       : variant === 'ghost'
         ? theme.colors.accent
@@ -64,7 +75,7 @@ export function ActionLink({
       onPress={handlePress}
       style={({pressed}) => [
         styles.button,
-        {backgroundColor: backgrounds[variant], minHeight: theme.touchTarget},
+        {backgroundColor, minHeight: theme.touchTarget},
         border,
         pressed && styles.pressed,
         style,

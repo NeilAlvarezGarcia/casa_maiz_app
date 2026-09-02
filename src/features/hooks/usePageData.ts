@@ -10,14 +10,6 @@ export type PageLoadState =
   | {status: 'unsupported'; message: string}
   | {status: 'not-found'};
 
-/**
- * Loads a CMS page with a resilience strategy:
- *  1. Serves valid cached content immediately (fast, offline-friendly);
- *  2. Fetches fresh content from the network and surfaces it;
- *  3. On network failure, falls back to the persisted cache flagged `stale`
- *     (visible to the user but non-blocking);
- *  4. Contract-version mismatches surface as `unsupported`, not generic errors.
- */
 export function usePageData(
   client: CmsClient,
   slug: string,
@@ -65,7 +57,6 @@ export function usePageData(
           }
         }
 
-        // Network/HTTP failure — attempt the persisted cache fallback.
         try {
           const cached = await client.readCachedPage(slug);
           if (controller.signal.aborted) {

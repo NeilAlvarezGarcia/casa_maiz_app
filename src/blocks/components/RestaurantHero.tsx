@@ -10,11 +10,14 @@ interface RestaurantHeroProps {
 }
 
 export function RestaurantHero({block}: RestaurantHeroProps): React.JSX.Element {
-  // Hero placement is full-width at the top of the screen; lay the text over
-  // the imagery with a scrim for legibility on both light and dark surfaces.
   return (
     <View style={styles.container} testID="restaurantHero">
-      <MediaImage media={block.image} style={styles.image} width="100%" />
+      <MediaImage
+        media={block.image}
+        style={styles.image}
+        width="100%"
+        aspectRatio={4 / 3}
+      />
       <View style={styles.overlay}>
         {block.eyebrow ? (
           <ThemedText variant="eyebrow" color="onAccent" style={styles.eyebrow}>
@@ -39,6 +42,7 @@ export function RestaurantHero({block}: RestaurantHeroProps): React.JSX.Element 
                 label={action.label ?? ''}
                 destination={action.destination ?? action.href}
                 variant={i === 0 ? 'primary' : 'outline'}
+                onAccent
               />
             ))}
           </View>
@@ -52,16 +56,20 @@ const styles = StyleSheet.create({
   container: {
     position: 'relative',
     width: '100%',
+    overflow: 'hidden',
+    borderRadius: 14,
   },
   image: {},
   overlay: {
     position: 'absolute',
     left: 0,
     right: 0,
+    top: 0,
     bottom: 0,
     padding: 20,
-    paddingTop: 60,
-    backgroundColor: 'rgba(0,0,0,0.35)',
+    paddingTop: 56,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.45)',
     gap: 8,
   },
   eyebrow: {

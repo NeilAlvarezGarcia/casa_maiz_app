@@ -24,13 +24,7 @@ import {
 
 const ALERT_SHOWN_PREFIX = 'cms:v1:alertShown:';
 
-/**
- * Renders bootstrap-driven chrome above the tab navigator: operational
- * notices, alerts, and the app-update presentation. All copy comes from the
- * CMS. Alerts honor placement, trigger delay, frequency/cooldown, page
- * targeting, dismissal, and actions. Cooldown state persists in AsyncStorage
- * so a repeated alert respects its frequency across sessions.
- */
+
 export function TopBar(): React.JSX.Element {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
@@ -41,8 +35,8 @@ export function TopBar(): React.JSX.Element {
   const [dismissed, setDismissed] = useState<Record<string, boolean>>({});
   const [cooldowns, setCooldowns] = useState<Record<string, number>>({});
 
-  // Load persisted last-shown timestamps once. Used to throttle repeated
-  // alerts per their frequency (cooldownHours/once).
+
+
   useEffect(() => {
     let mounted = true;
     const load = async () => {
@@ -73,7 +67,7 @@ export function TopBar(): React.JSX.Element {
     await asyncStorageAdapter.setItem(ALERT_SHOWN_PREFIX + id, String(ts)).catch(() => {});
   };
 
-  // Alerts that match placement, page targeting, and are not dismissed.
+
   const candidates = useMemo(
     () =>
       data.alerts
@@ -85,7 +79,7 @@ export function TopBar(): React.JSX.Element {
     [data.alerts, dismissed, activeRoute, cooldowns],
   );
 
-  // Enforce per-alert trigger delays (load/delayMs) before showing.
+
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
   const timers = useRef<Array<ReturnType<typeof setTimeout>>>([]);
   useEffect(() => {

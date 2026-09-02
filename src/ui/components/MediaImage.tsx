@@ -12,21 +12,17 @@ import type {Media} from '../../api/schemas/shared';
 
 interface MediaImageProps {
   media?: Media;
-  /** Overrides the auto-picked source (e.g. an explicit mobileImage field). */
+
   source?: Media;
   style?: StyleProp<ViewStyle>;
   width?: DimensionValue;
-  /** When both width and aspect ratio are known, the image won't shift layout. */
+
   aspectRatio?: number;
   accessibilityLabel?: string;
   testID?: string;
 }
 
-/**
- * Renders a CMS media object, choosing the appropriate mobile source and
- * reserving space (via width + aspectRatio or raw dimensions) to avoid layout
- * shifts. Missing/malformed media renders nothing without crashing.
- */
+
 export function MediaImage({
   media,
   source,
@@ -49,7 +45,7 @@ export function MediaImage({
     if (m?.width && m?.height && m.width > 0) {
       return m.width / m.height;
     }
-    // Safe default for CMS artwork; prevents a zero-height flash.
+
     return 16 / 9;
   }, [aspectRatio, source, media]);
 

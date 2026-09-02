@@ -7,11 +7,6 @@ interface UnknownBlockProps {
   blockType: string;
 }
 
-/**
- * Safe fallback for unknown, incomplete, or future block types. Renders a
- * deliberately minimal placeholder so content authors notice the gap without
- * crashing the screen. In production this can be swapped for a no-op render.
- */
 export function UnknownBlock({blockType}: UnknownBlockProps): React.JSX.Element {
   const theme = useTheme();
   return (

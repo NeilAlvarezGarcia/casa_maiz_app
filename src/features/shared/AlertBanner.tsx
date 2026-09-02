@@ -8,14 +8,11 @@ interface AlertBannerProps {
   alert: Alert;
   onAction?: (href?: string, label?: string) => void;
   onDismiss: () => void;
-  /** Called once the alert becomes visible (for frequency/cooldown tracking). */
+
   onShown?: () => void;
 }
 
-/**
- * Renders an active CMS alert (topBar placement) with its dismissal state and
- * any actions routed through the centralized resolver.
- */
+
 export function AlertBanner({
   alert,
   onAction,

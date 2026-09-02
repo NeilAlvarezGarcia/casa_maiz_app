@@ -45,6 +45,7 @@ export function RestaurantCta({
           label={block.label}
           destination={block.destination ?? block.href}
           variant={emphasized ? 'ghost' : 'primary'}
+          onAccent={emphasized}
           style={styles.cta}
         />
       ) : null}

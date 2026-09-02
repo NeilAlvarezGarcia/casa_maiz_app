@@ -1,10 +1,6 @@
 import {Platform} from 'react-native';
 import {APP_VERSION, AUDIENCE, CONTRACT_VERSION, MARKET} from '../../config';
 
-/**
- * The application version reported to the CMS, normalized to semantic x.y.z.
- * `APP_VERSION` comes from the environment (.env) and is validated at startup.
- */
 export function getAppVersion(): string {
   return normalizeVersion(APP_VERSION);
 }
@@ -20,20 +16,12 @@ export function normalizeVersion(value: string): string {
   return `${major}.${minor}.${patch}`;
 }
 
-/**
- * The platform string the CMS expects: `ios` or `android`, derived from
- * Platform.OS. Anything unexpected is rejected by the CMS client.
- */
 export function getPlatform(): 'ios' | 'android' {
   return Platform.OS === 'ios' || Platform.OS === 'android'
     ? Platform.OS
     : 'ios';
 }
 
-/**
- * Central construction of the delivery context appended as query parameters
- * to every content request. Screens never build query strings themselves.
- */
 export interface DeliveryQuery {
   platform: 'ios' | 'android';
   market: string;
@@ -50,11 +38,6 @@ export function buildDeliveryQuery(): DeliveryQuery {
   };
 }
 
-/**
- * Builds the delivery-context query string. Avoids `URLSearchParams` because
- * some RN runtimes (Hermes on Android with a partial URL polyfill) do not
- * implement every method (`set`), which would throw before any request is made.
- */
 export function deliveryQueryToSearchParams(
   query: DeliveryQuery,
 ): string {

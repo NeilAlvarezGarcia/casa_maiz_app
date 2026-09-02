@@ -1,8 +1,3 @@
-/**
- * Transport-level errors produced by the CMS client. They distinguish cases
- * the app needs to react to from generic failures so the UI can show the
- * right state (retry, offline fallback, unsupported contract, etc).
- */
 export type CmsErrorCode =
   | 'network'
   | 'http'
@@ -30,16 +25,10 @@ const DEBUG_LOG_PREFIX = '[cms]';
 
 function debugLog(...parts: unknown[]): void {
   if (__DEV__) {
-
     console.log(DEBUG_LOG_PREFIX, ...parts);
   }
 }
 
-/**
- * Minimal fetch wrapper: enforces a timeout, maps failures to CmsError, and
- * never throws raw network exceptions. A caller-provided abort signal lets the
- * caller cancel in-flight work and ignore obsolete responses.
- */
 export async function fetchJson(
   url: string,
   options: {signal?: AbortSignal; method?: string; body?: string} = {},
@@ -66,7 +55,6 @@ export async function fetchJson(
     } catch (error) {
       const isAbort = controller.signal.aborted;
       if (isAbort && signal?.aborted) {
-        // Caller asked to cancel — the throw is swallowed and reported as such.
         throw error;
       }
       throw new CmsError(

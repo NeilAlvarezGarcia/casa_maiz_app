@@ -21,15 +21,9 @@ export interface CmsClientOptions {
 
 export interface FetchOptions {
   signal?: AbortSignal;
-  /** Bypass the cache and force a network fetch. */
   force?: boolean;
 }
 
-/**
- * Validates media URLs: relative payload paths are resolved against the API
- * base URL; absolute CDN URLs are returned as-is; anything malformed becomes
- * undefined so the image layer can fall back safely.
- */
 export function resolveMediaUrl(
   rawUrl: string | undefined,
   baseUrl: string = API_BASE_URL,
@@ -44,14 +38,13 @@ export function resolveMediaUrl(
   if (rawUrl.startsWith('/')) {
     return `${trimmedBase}${rawUrl}`;
   }
-  // Relative payload paths served from the API's own /api/media/file route.
+
   if (rawUrl.startsWith('media/')) {
     return `${trimmedBase}/api/${rawUrl}`;
   }
   return `${trimmedBase}/${rawUrl}`;
 }
 
-/** Pick the most mobile-appropriate source from a media object. */
 export function preferredMediaUrl(
   media: {url?: string; sizes?: Record<string, {url?: string}>} | undefined,
   baseUrl: string = API_BASE_URL,
@@ -64,11 +57,6 @@ export function preferredMediaUrl(
   return resolveMediaUrl(preferred, baseUrl);
 }
 
-/**
- * Typed, independently testable CMS client. It owns context construction,
- * contract-version validation, endpoint addressing, and cache read/write so
- * screens never build request URLs or parse responses themselves.
- */
 export class CmsClient {
   readonly baseUrl: string;
   readonly context: DeliveryQuery;
@@ -145,15 +133,10 @@ export class CmsClient {
     return this.fetchPage('menu', options);
   }
 
-  /** Generic page fetcher routed by slug. */
   getPage(slug: string, options?: FetchOptions): Promise<PageData> {
     return this.fetchPage(slug, options);
   }
 
-  /**
-   * Reads the persisted cache for a page (possibly stale) without touching the
-   * network. Used as the offline/read-only fallback surface.
-   */
   async readCachedPage(slug: string): Promise<{
     data: PageData;
     stale: boolean;
