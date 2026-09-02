@@ -14,26 +14,20 @@ import {
   focusedRouteName,
 } from './src/navigation/activeRoute';
 
-/**
- * Application shell: renders the CMS-driven chrome and navigator, theming the
- * whole tree with the bootstrapped accent. The visible loading state is
- * deliberate until /bootstrap resolves so accents are consistent.
- */
 function BootstrappedApp(): React.JSX.Element {
   const bootstrap = useBootstrap();
   const theme = useTheme();
-  const insetsTheme = theme;
 
   return (
     <ThemeProvider accent={bootstrap.accent}>
       <View
         style={[
           styles.root,
-          { backgroundColor: insetsTheme.colors.background },
+          { backgroundColor: theme.colors.background },
         ]}>
         <StatusBar
-          barStyle={insetsTheme.isDark ? 'light-content' : 'dark-content'}
-          backgroundColor={insetsTheme.colors.background}
+          barStyle={theme.isDark ? 'light-content' : 'dark-content'}
+          backgroundColor={theme.colors.background}
         />
         {bootstrap.loading ? (
           <LoadingState label="Iniciando…" />

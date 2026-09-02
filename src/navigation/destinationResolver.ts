@@ -77,18 +77,14 @@ export async function handleDestination(
     | { path?: string; href?: string; key?: string }
     | undefined,
 ): Promise<void> {
-  try {
-    const resolved = resolveDestination(rawDestination);
-    if (resolved.kind === 'internal' && resolved.route) {
-      navigation.navigate(resolved.route);
-    } else if (resolved.kind === 'external' && resolved.url) {
-      const supported = await Linking.canOpenURL(resolved.url);
-      if (supported) {
-        await Linking.openURL(resolved.url);
-      }
+  const resolved = resolveDestination(rawDestination);
+  if (resolved.kind === 'internal' && resolved.route) {
+    navigation.navigate(resolved.route);
+  } else if (resolved.kind === 'external' && resolved.url) {
+    const supported = await Linking.canOpenURL(resolved.url);
+    if (supported) {
+      await Linking.openURL(resolved.url);
     }
-  } catch {
-    // Unsupported or failing destinations fail safely: no-op.
   }
 }
 

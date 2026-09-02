@@ -1,8 +1,7 @@
 import type { LinkingOptions } from '@react-navigation/native';
+import { DEEP_LINK_SCHEME, WEB_PREFIX_URL } from '../config';
 import { ROUTE_MAP } from './destinationResolver';
 import type { NavigatorRootParamList } from './destinationResolver';
-
-export const scheme = 'casamaiz';
 
 function pathToRoute(
   route: keyof NavigatorRootParamList,
@@ -21,7 +20,7 @@ function pathToRoute(
 }
 
 export const linking: LinkingOptions<NavigatorRootParamList> = {
-  prefixes: [`${scheme}://`, 'https://payload-cms-poc-seven.vercel.app'],
+  prefixes: [`${DEEP_LINK_SCHEME}://`, WEB_PREFIX_URL],
   config: {
     screens: {
       Home: pathToRoute('Home'),

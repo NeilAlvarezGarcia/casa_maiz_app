@@ -39,7 +39,7 @@ export function AppUpdateBanner({
     : message ?? 'Hay una versión nueva disponible. Recomendamos actualizar.';
 
   const handleUpdate = () => {
-    Linking.openURL('https://example.invalid/store').catch(() => {});
+    Linking.openURL('https://example.invalid/store');
   };
 
   return (

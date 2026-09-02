@@ -10,18 +10,18 @@ export type TextVariant =
   | 'caption'
   | 'button';
 
-const variantStyles: Record<TextVariant, (dark: boolean) => TextStyle> = {
-  eyebrow: () => ({
+const variantStyles: Record<TextVariant, TextStyle> = {
+  eyebrow: {
     fontSize: 12,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 1.2,
-  }),
-  heading: () => ({ fontSize: 26, fontWeight: '700', lineHeight: 32 }),
-  title: () => ({ fontSize: 20, fontWeight: '700', lineHeight: 26 }),
-  body: () => ({ fontSize: 16, fontWeight: '400', lineHeight: 24 }),
-  caption: () => ({ fontSize: 13, fontWeight: '400', lineHeight: 18 }),
-  button: () => ({ fontSize: 16, fontWeight: '600' }),
+  },
+  heading: { fontSize: 26, fontWeight: '700', lineHeight: 32 },
+  title: { fontSize: 20, fontWeight: '700', lineHeight: 26 },
+  body: { fontSize: 16, fontWeight: '400', lineHeight: 24 },
+  caption: { fontSize: 13, fontWeight: '400', lineHeight: 18 },
+  button: { fontSize: 16, fontWeight: '600' },
 };
 
 interface ThemedTextProps extends TextProps {
@@ -48,7 +48,7 @@ export function ThemedText({
     <Text
       {...props}
       style={[
-        variantStyles[variant](theme.isDark),
+        variantStyles[variant],
         { color: colorMap[color] },
         style,
       ]}

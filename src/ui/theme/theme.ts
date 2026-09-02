@@ -16,6 +16,11 @@ export interface ThemeColors {
   warning: string;
   success: string;
   notice: string;
+  overlay: string;
+  surfaceOnAccent: string;
+  heroEyebrow: string;
+  glassLight: string;
+  glassDark: string;
 }
 
 export interface ThemeSpacing {
@@ -61,6 +66,11 @@ const lightColors: ThemeColors = {
   warning: '#8a5a00',
   success: '#1e7a3c',
   notice: '#c8960c',
+  overlay: 'rgba(0,0,0,0.45)',
+  surfaceOnAccent: 'rgba(255,255,255,0.16)',
+  heroEyebrow: '#ffd9a0',
+  glassLight: 'rgba(255,255,255,0.72)',
+  glassDark: 'rgba(20,18,16,0.72)',
 };
 
 const darkColors: ThemeColors = {
@@ -79,6 +89,11 @@ const darkColors: ThemeColors = {
   warning: '#ffd38a',
   success: '#7ee08b',
   notice: '#ffcf5c',
+  overlay: 'rgba(0,0,0,0.55)',
+  surfaceOnAccent: 'rgba(255,255,255,0.12)',
+  heroEyebrow: '#ffd9a0',
+  glassLight: 'rgba(255,255,255,0.72)',
+  glassDark: 'rgba(20,18,16,0.72)',
 };
 
 export const spacing: ThemeSpacing = {
@@ -92,10 +107,55 @@ export const spacing: ThemeSpacing = {
 
 const fontSizes = { xs: 12, sm: 14, md: 16, lg: 20, xl: 26, xxl: 32 } as const;
 
+function hexToRgb(hex: string): [number, number, number] | null {
+  const m = /^#([0-9a-f]{3,8})$/i.exec(hex);
+  if (!m) {
+    return null;
+  }
+  let h = m[1];
+  if (h.length === 3) {
+    h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+  }
+  if (h.length !== 6) {
+    return null;
+  }
+  return [
+    parseInt(h.slice(0, 2), 16),
+    parseInt(h.slice(2, 4), 16),
+    parseInt(h.slice(4, 6), 16),
+  ];
+}
+
+function relativeLuminance(r: number, g: number, b: number): number {
+  const sRGB = [r, g, b].map(v => {
+    const s = v / 255;
+    return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * sRGB[0] + 0.7152 * sRGB[1] + 0.0722 * sRGB[2];
+}
+
+function contrastOnAccent(accentHex: string, isDark: boolean): string {
+  const rgb = hexToRgb(accentHex);
+  if (!rgb) {
+    return isDark ? darkColors.textOnAccent : lightColors.textOnAccent;
+  }
+  const lum = relativeLuminance(...rgb);
+  return lum > 0.4 ? '#141210' : '#ffffff';
+}
+
 export function buildTheme(isDark: boolean, accent?: string): ThemeType {
-  const colors: ThemeColors = isDark
-    ? { ...darkColors, accent: accent ?? darkColors.accent }
-    : { ...lightColors, accent: accent ?? lightColors.accent };
+  const palette = isDark ? darkColors : lightColors;
+  const accentValue = accent ?? palette.accent;
+  const colors: ThemeColors = {
+    ...palette,
+    accent: accentValue,
+    accentContrast: accent
+      ? contrastOnAccent(accent, isDark)
+      : palette.accentContrast,
+    textOnAccent: accent
+      ? contrastOnAccent(accent, isDark)
+      : palette.textOnAccent,
+  };
   const isAndroid = Platform.OS === 'android';
   return {
     colors,

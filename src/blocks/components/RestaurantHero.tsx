@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import type { RestaurantHeroBlock } from '../../api/types';
+import { useTheme } from '../../ui/theme';
 import { ThemedText } from '../../ui/components/Text';
 import { MediaImage } from '../../ui/components/MediaImage';
 import { ActionLink } from '../../ui/components/ActionLink';
@@ -12,6 +13,7 @@ interface RestaurantHeroProps {
 export function RestaurantHero({
   block,
 }: RestaurantHeroProps): React.JSX.Element {
+  const theme = useTheme();
   return (
     <View style={styles.container} testID="restaurantHero">
       <MediaImage
@@ -20,25 +22,22 @@ export function RestaurantHero({
         width="100%"
         aspectRatio={4 / 3}
       />
-      <View style={styles.overlay}>
+      <View style={[styles.overlay, { backgroundColor: theme.colors.overlay }]}>
         {block.eyebrow ? (
-          <ThemedText variant="eyebrow" color="onAccent" style={styles.eyebrow}>
+          <ThemedText
+            variant="eyebrow"
+            color="onAccent"
+            style={{ color: theme.colors.heroEyebrow }}>
             {block.eyebrow}
           </ThemedText>
         ) : null}
         {block.headline ? (
-          <ThemedText
-            variant="heading"
-            color="onAccent"
-            style={styles.headline}>
+          <ThemedText variant="heading" color="onAccent">
             {block.headline}
           </ThemedText>
         ) : null}
         {block.description ? (
-          <ThemedText
-            variant="body"
-            color="onAccent"
-            style={styles.description}>
+          <ThemedText variant="body" color="onAccent">
             {block.description}
           </ThemedText>
         ) : null}
@@ -77,17 +76,7 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 56,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.45)',
     gap: 8,
-  },
-  eyebrow: {
-    color: '#ffd9a0',
-  },
-  headline: {
-    color: '#ffffff',
-  },
-  description: {
-    color: '#f5efe6',
   },
   actions: {
     flexDirection: 'row',

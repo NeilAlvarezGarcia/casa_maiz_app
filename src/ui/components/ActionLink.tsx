@@ -43,7 +43,7 @@ export function ActionLink({
 
   const handlePress = () => {
     onPress?.();
-    handleDestination(navigation, destination).catch(() => {});
+    handleDestination(navigation, destination);
   };
 
   const backgrounds: Record<string, string> = {
@@ -64,7 +64,7 @@ export function ActionLink({
 
   const backgroundColor =
     onAccent && variant === 'ghost'
-      ? 'rgba(255,255,255,0.16)'
+      ? theme.colors.surfaceOnAccent
       : backgrounds[variant];
 
   const textColor =

@@ -42,8 +42,8 @@ export function RootNavigator({
   const glass = !theme.isAndroid && !reducedTransparency;
   const tabBarBackground = glass
     ? theme.isDark
-      ? 'rgba(20,18,16,0.72)'
-      : 'rgba(255,255,255,0.72)'
+      ? theme.colors.glassDark
+      : theme.colors.glassLight
     : theme.colors.surface;
 
   const cmsTabs = items

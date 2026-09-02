@@ -88,22 +88,14 @@ export class ContentCache {
   async set(key: string, entry: CacheEntry): Promise<void> {
     this.memory.set(key, entry);
     if (this.storage) {
-      try {
-        await this.storage.setItem(this.prefix + key, JSON.stringify(entry));
-      } catch {
-        // Persistence failure must never break the request path.
-      }
+      await this.storage.setItem(this.prefix + key, JSON.stringify(entry));
     }
   }
 
   async invalidate(key: string): Promise<void> {
     this.memory.delete(key);
     if (this.storage) {
-      try {
-        await this.storage.removeItem(this.prefix + key);
-      } catch {
-        // best-effort
-      }
+      await this.storage.removeItem(this.prefix + key);
     }
   }
 

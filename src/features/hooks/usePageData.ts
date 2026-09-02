@@ -62,22 +62,18 @@ export function usePageData(
           }
         }
 
-        try {
-          const cached = await client.readCachedPage(slug);
-          if (controller.signal.aborted) {
-            return;
-          }
-          if (cached) {
-            notify({
-              status: 'success',
-              data: cached.data,
-              stale: cached.stale,
-              staleReason: cached.reason,
-            });
-            return;
-          }
-        } catch {
-          // fallback read failure is non-fatal
+        const cached = await client.readCachedPage(slug);
+        if (controller.signal.aborted) {
+          return;
+        }
+        if (cached) {
+          notify({
+            status: 'success',
+            data: cached.data,
+            stale: cached.stale,
+            staleReason: cached.reason,
+          });
+          return;
         }
 
         if (error instanceof CmsError) {
@@ -98,7 +94,7 @@ export function usePageData(
       }
     };
 
-    load().catch(() => {});
+    load();
     return () => {
       mounted.current = false;
       controller.abort();

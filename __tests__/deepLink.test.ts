@@ -1,12 +1,11 @@
-import { linking, scheme } from '../src/navigation/deepLink';
+import { linking } from '../src/navigation/deepLink';
+import { DEEP_LINK_SCHEME, WEB_PREFIX_URL } from '../src/config';
 import { ROUTE_MAP } from '../src/navigation/destinationResolver';
 
 describe('deep link configuration', () => {
   it('prefers the custom scheme and the published CMS host', () => {
-    expect(linking.prefixes).toContain(`${scheme}://`);
-    expect(linking.prefixes).toContain(
-      'https://payload-cms-poc-seven.vercel.app',
-    );
+    expect(linking.prefixes).toContain(`${DEEP_LINK_SCHEME}://`);
+    expect(linking.prefixes).toContain(WEB_PREFIX_URL);
   });
 
   it('exposes every ROUTE_MAP route as a deep-link path', () => {

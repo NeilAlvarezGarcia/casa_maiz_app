@@ -86,7 +86,7 @@ export function BootstrapProvider({
       }
     };
 
-    load().catch(() => {});
+    load();
     return () => {
       mounted = false;
       controller.abort();

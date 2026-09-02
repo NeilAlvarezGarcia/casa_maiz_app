@@ -65,7 +65,7 @@ export function useLegalContent(
       }
     };
 
-    load().catch(() => {});
+    load();
     return () => {
       mounted.current = false;
       controller.abort();

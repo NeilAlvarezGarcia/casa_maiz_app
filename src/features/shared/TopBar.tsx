@@ -37,21 +37,27 @@ export function TopBar(): React.JSX.Element {
   useEffect(() => {
     let mounted = true;
     const load = async () => {
-      const ids = data.alerts.map(a => a.id).filter((id): id is string => !!id);
-      const entries = await Promise.all(
-        ids.map(async id => {
-          const raw = await asyncStorageAdapter.getItem(
-            ALERT_SHOWN_PREFIX + id,
-          );
-          const ts = raw ? Number(raw) : NaN;
-          return [id, Number.isFinite(ts) ? ts : 0] as const;
-        }),
-      );
-      if (mounted) {
-        setCooldowns(Object.fromEntries(entries));
+      try {
+        const ids = data.alerts.map(a => a.id).filter((id): id is string => !!id);
+        const entries = await Promise.all(
+          ids.map(async id => {
+            const raw = await asyncStorageAdapter.getItem(
+              ALERT_SHOWN_PREFIX + id,
+            );
+            const ts = raw ? Number(raw) : NaN;
+            return [id, Number.isFinite(ts) ? ts : 0] as const;
+          }),
+        );
+        if (mounted) {
+          setCooldowns(Object.fromEntries(entries));
+        }
+      } catch {
+        if (mounted) {
+          setCooldowns({});
+        }
       }
     };
-    load().catch(() => {});
+    load();
     return () => {
       mounted = false;
     };
@@ -63,9 +69,7 @@ export function TopBar(): React.JSX.Element {
     }
     const ts = Date.now();
     setCooldowns(prev => ({ ...prev, [id]: ts }));
-    await asyncStorageAdapter
-      .setItem(ALERT_SHOWN_PREFIX + id, String(ts))
-      .catch(() => {});
+    await asyncStorageAdapter.setItem(ALERT_SHOWN_PREFIX + id, String(ts));
   };
 
   const candidates = useMemo(
@@ -104,8 +108,6 @@ export function TopBar(): React.JSX.Element {
     return () => {
       pending.forEach(clearTimeout);
     };
-    // Running on revealed changes is safe: unrevealed alerts simply get their
-    // timer (re)scheduled, and already-revealed alerts are skipped.
   }, [candidates, revealed]);
 
   const visibleAlerts = candidates.filter(
@@ -132,7 +134,7 @@ export function TopBar(): React.JSX.Element {
           key={alert.id}
           alert={alert}
           onAction={href => {
-            handleDestination(navigation, href).catch(() => {});
+            handleDestination(navigation, href);
           }}
           onDismiss={() => {
             const id = alert.id;
