@@ -29,6 +29,17 @@ target 'CasaMaiz' do
   end
 
   post_install do |installer|
+    # Patch fmt consteval for Xcode 26 / Apple clang 26 compatibility
+    fmt_header = File.join(installer.sandbox.root, 'fmt/include/fmt/base.h')
+    if File.exist?(fmt_header)
+      content = File.read(fmt_header)
+      patched = content.gsub(
+        /#if FMT_USE_CONSTEVAL\n#  define FMT_CONSTEVAL consteval/,
+        "#if 0 // FMT_USE_CONSTEVAL disabled for Xcode 26 compatibility\n#  define FMT_CONSTEVAL consteval"
+      )
+      File.write(fmt_header, patched) if patched != content
+    end
+
     # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,
