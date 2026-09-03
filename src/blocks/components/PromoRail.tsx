@@ -1,4 +1,3 @@
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import type { PromoRailBlock } from '../../api/types';
 import { SectionHeader } from './SectionHeader';
@@ -9,7 +8,7 @@ interface PromoRailProps {
   block: PromoRailBlock;
 }
 
-export function PromoRail({ block }: PromoRailProps): React.JSX.Element {
+export function PromoRail({ block }: PromoRailProps): JSX.Element {
   const items = block.promotions as (typeof block.promotions)[number][];
 
   if (!items.length) {

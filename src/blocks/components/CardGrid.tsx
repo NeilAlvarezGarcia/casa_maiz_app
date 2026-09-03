@@ -1,4 +1,3 @@
-import React from 'react';
 import { FlatList, StyleSheet, useWindowDimensions, View } from 'react-native';
 import type { CardGridBlock } from '../../api/types';
 import { useTheme } from '../../ui/theme';
@@ -10,7 +9,7 @@ interface CardGridProps {
   block: CardGridBlock;
 }
 
-export function CardGrid({ block }: CardGridProps): React.JSX.Element {
+export function CardGrid({ block }: CardGridProps): JSX.Element {
   const theme = useTheme();
   const { width } = useWindowDimensions();
   const columns = width >= 768 ? 2 : 2;

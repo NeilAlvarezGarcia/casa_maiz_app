@@ -6,7 +6,12 @@
  *  2. Unknown / future block types render safely instead of crashing.
  */
 import React from 'react';
-import { render } from '@testing-library/react-native';
+import {
+  render,
+  fireEvent,
+  waitFor,
+  act,
+} from '@testing-library/react-native';
 import { BlockRenderer } from '../src/blocks/BlockRenderer';
 import { ThemeProvider } from '../src/ui/theme';
 import type { LayoutBlock } from '../src/api/types';
@@ -65,9 +70,58 @@ describe('BlockRenderer unknown-block behavior', () => {
     expect(getByText('Bloque no disponible')).toBeTruthy();
   });
 
-  it('renders nothing when a documented-but-unimplemented block type is sent', () => {
-    // cta/mediaBlock/archive/etc parse fine but intentionally render nothing.
-    const { queryByTestId } = renderBlock({ blockType: 'archive' });
-    expect(queryByTestId('unknown-block-archive')).toBeNull();
+  it('renders nothing when a documented block is sent with empty content', () => {
+    // archive/mediaBlock/etc render null when they have no content.
+    const { toJSON } = renderBlock({ blockType: 'archive' });
+    expect(toJSON()).toBeNull();
+  });
+
+  it('renders an archive block with items', () => {
+    const { getByTestId, getByText } = renderBlock({
+      blockType: 'archive',
+      title: 'Colección',
+      items: [
+        { title: 'Evento 1', description: 'Una descripción.', cta: { label: 'Ver' } },
+      ],
+    });
+
+    expect(getByTestId('archive')).toBeTruthy();
+    expect(getByText('Colección')).toBeTruthy();
+    expect(getByText('Evento 1')).toBeTruthy();
+  });
+
+  it('renders a form block and submits via mocked boundary', async () => {
+    const { getByTestId, getByText, getByLabelText, getByRole } = renderBlock({
+      blockType: 'formBlock',
+      title: 'Contáctanos',
+      form: 'contact-form',
+      fields: [
+        { name: 'name', label: 'Nombre', required: true },
+      ],
+    });
+
+    expect(getByTestId('formBlock')).toBeTruthy();
+    expect(getByText('Contáctanos')).toBeTruthy();
+
+    fireEvent.changeText(getByLabelText('Nombre'), 'Ana');
+    fireEvent.press(getByRole('button'));
+
+    await act(async () => {});
+    await waitFor(() => {
+      expect(getByTestId('formBlock-success')).toBeTruthy();
+      expect(getByText(/¡Gracias!/)).toBeTruthy();
+    });
+  });
+
+  it('renders a cta block with label and action', () => {
+    const { getByTestId, getByText } = renderBlock({
+      blockType: 'cta',
+      headline: 'Reserva tu mesa',
+      label: 'Reservar',
+    });
+
+    expect(getByTestId('cta')).toBeTruthy();
+    expect(getByText('Reserva tu mesa')).toBeTruthy();
+    expect(getByText('Reservar')).toBeTruthy();
   });
 });

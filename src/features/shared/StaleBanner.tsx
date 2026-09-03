@@ -1,4 +1,3 @@
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from '../../ui/theme';
 import { ThemedText } from '../../ui/components/Text';
@@ -12,14 +11,14 @@ export function StaleNotice({
   state,
 }: {
   state: PageLoadState;
-}): React.JSX.Element | null {
+}): JSX.Element | null {
   if (state.status !== 'success' || !state.stale) {
     return null;
   }
   return <StaleBanner reason={state.staleReason} />;
 }
 
-export function StaleBanner({ reason }: StaleBannerProps): React.JSX.Element {
+export function StaleBanner({ reason }: StaleBannerProps): JSX.Element {
   const theme = useTheme();
   const label =
     reason === 'nextChangeAt-exceeded'

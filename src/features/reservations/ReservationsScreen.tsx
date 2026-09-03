@@ -1,32 +1,25 @@
-import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { useTheme } from '../../ui/theme';
-import { ThemedText } from '../../ui/components/Text';
+import { CmsClient } from '../../api/cmsClient';
+import { usePageData } from '../hooks/usePageData';
+import { PageScreen } from '../shared/PageScreen';
+import { StaleNotice } from '../shared/StaleBanner';
 
-export function ReservationsScreen(): React.JSX.Element {
-  const theme = useTheme();
-  return (
-    <ScrollView
-      style={[styles.scroll, { backgroundColor: theme.colors.background }]}
-      contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={[
-        styles.content,
-        { paddingHorizontal: theme.horizontalPadding },
-      ]}
-      testID="reservations-screen">
-      <View style={styles.body}>
-        <ThemedText variant="heading">Reservaciones</ThemedText>
-        <ThemedText variant="body" color="muted" style={styles.message}>
-          La reservación en línea estará disponible próximamente.
-        </ThemedText>
-      </View>
-    </ScrollView>
-  );
+interface ReservationsScreenProps {
+  client: CmsClient;
 }
 
-const styles = StyleSheet.create({
-  scroll: { flex: 1 },
-  content: { paddingTop: 32, paddingBottom: 40 },
-  body: { gap: 12 },
-  message: { lineHeight: 22 },
-});
+export function ReservationsScreen({
+  client,
+}: ReservationsScreenProps): JSX.Element {
+  const { state, refresh } = usePageData(client, 'reservations');
+  const banner = <StaleNotice state={state} />;
+
+  return (
+    <PageScreen
+      title="Reservaciones"
+      state={state}
+      onRefresh={refresh}
+      banner={banner}
+      testID="reservations-screen"
+    />
+  );
+}

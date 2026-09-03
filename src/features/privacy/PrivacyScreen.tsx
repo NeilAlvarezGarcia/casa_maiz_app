@@ -1,4 +1,3 @@
-import React from 'react';
 import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { CmsClient } from '../../api/cmsClient';
 import { useLegalContent } from '../hooks/useLegalContent';
@@ -16,7 +15,7 @@ interface PrivacyScreenProps {
 
 export function PrivacyScreen({
   client,
-}: PrivacyScreenProps): React.JSX.Element {
+}: PrivacyScreenProps): JSX.Element {
   const theme = useTheme();
   const { state, refresh } = useLegalContent(client, 'privacy_policy');
 
@@ -30,7 +29,7 @@ export function PrivacyScreen({
         title="No pudimos cargar el aviso de privacidad"
         message={
           state.status === 'not-found'
-            ? 'Este documento ya no está disponible.'
+            ? 'Este documento no está disponible.'
             : state.message
         }
         onRetry={refresh}

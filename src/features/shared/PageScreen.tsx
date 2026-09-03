@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { BlockRenderer } from '../../blocks/BlockRenderer';
 import { useTheme } from '../../ui/theme';
@@ -16,7 +16,7 @@ interface PageScreenProps {
   onRefresh?: () => void;
   refreshing?: boolean;
 
-  banner?: React.ReactNode;
+  banner?: ReactNode;
   testID?: string;
 }
 
@@ -27,7 +27,7 @@ export function PageScreen({
   refreshing = false,
   banner,
   testID,
-}: PageScreenProps): React.JSX.Element {
+}: PageScreenProps): JSX.Element {
   const theme = useTheme();
 
   if (state.status === 'loading') {
@@ -50,7 +50,7 @@ export function PageScreen({
     return (
       <ErrorState
         title="Página no encontrada"
-        message="Este contenido ya no está disponible."
+        message="Este contenido no está disponible."
         onRetry={onRefresh}
         testID="page-not-found"
       />

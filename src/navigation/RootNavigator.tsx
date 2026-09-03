@@ -1,4 +1,3 @@
-import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { isIos } from '../core/platform';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -33,7 +32,7 @@ export function RootNavigator({
   client,
 }: {
   client: CmsClient;
-}): React.JSX.Element {
+}): JSX.Element {
   const theme = useTheme();
   const bootstrap = useBootstrap();
   const items = bootstrap.data.navigation?.items ?? [];
@@ -105,14 +104,14 @@ function ScreenForRoute({
 }: {
   route: RouteName;
   client: CmsClient;
-}): React.JSX.Element {
+}): JSX.Element {
   switch (route) {
     case RouteNames.Home:
       return <HomeScreen client={client} />;
     case RouteNames.Menu:
       return <MenuScreen client={client} />;
     case RouteNames.Reservations:
-      return <ReservationsScreen />;
+      return <ReservationsScreen client={client} />;
     case RouteNames.Privacy:
       return <PrivacyScreen client={client} />;
   }

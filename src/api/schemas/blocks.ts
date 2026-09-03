@@ -91,26 +91,74 @@ export const imageBlockSchema = z.looseObject({
 
 export const ctaBlockSchema = z.looseObject({
   blockType: z.literal('cta'),
+  eyebrow: z.string().optional(),
+  headline: z.string().optional(),
+  description: z.string().optional(),
+  label: z.string().optional(),
+  destination: destinationSchema.optional(),
+  href: z.string().optional(),
+  tone: z.string().optional(),
+  align: z.string().optional(),
   id: z.string().optional(),
 });
 
 export const mediaBlockSchema = z.looseObject({
   blockType: z.literal('mediaBlock'),
+  media: mediaSchema.optional(),
+  image: mediaSchema.optional(),
+  caption: z.string().optional(),
+  fullBleed: z.boolean().optional(),
+  aspectRatio: z.number().optional(),
   id: z.string().optional(),
+});
+
+export const archiveItemSchema = z.looseObject({
+  image: mediaSchema.optional(),
+  eyebrow: z.string().optional(),
+  title: z.string().optional(),
+  description: z.string().optional(),
+  cta: ctaSchema.optional(),
 });
 
 export const archiveSchema = z.looseObject({
   blockType: z.literal('archive'),
+  eyebrow: z.string().optional(),
+  title: z.string().optional(),
+  items: z.array(archiveItemSchema).default([]),
   id: z.string().optional(),
 });
 
 export const contentBlockSchema = z.looseObject({
   blockType: z.literal('content'),
+  eyebrow: z.string().optional(),
+  heading: z.string().optional(),
+  body: z.string().optional(),
+  alignment: z.string().optional(),
   id: z.string().optional(),
+});
+
+export const formFieldOptionSchema = z.looseObject({
+  label: z.string().optional(),
+  value: z.string().optional(),
+});
+
+export const formFieldSchema = z.looseObject({
+  id: z.string().optional(),
+  name: z.string().optional(),
+  label: z.string().optional(),
+  type: z.string().optional(),
+  required: z.boolean().optional(),
+  placeholder: z.string().optional(),
+  options: z.array(formFieldOptionSchema).optional(),
 });
 
 export const formBlockSchema = z.looseObject({
   blockType: z.literal('formBlock'),
+  title: z.string().optional(),
+  description: z.string().optional(),
+  form: z.string().optional(),
+  submitLabel: z.string().optional(),
+  fields: z.array(formFieldSchema).default([]),
   id: z.string().optional(),
 });
 

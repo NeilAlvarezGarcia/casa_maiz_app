@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   FlatList,
   StyleSheet,
@@ -19,7 +19,7 @@ interface CarouselProps {
   block: CarouselBlock;
 }
 
-export function Carousel({ block }: CarouselProps): React.JSX.Element {
+export function Carousel({ block }: CarouselProps): JSX.Element {
   const theme = useTheme();
   const { width } = useWindowDimensions();
   const [active, setActive] = useState(0);

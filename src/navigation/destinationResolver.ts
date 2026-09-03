@@ -23,6 +23,13 @@ export interface ResolutionResult {
   url?: string;
 }
 
+export function pathForRoute(route: RouteName): string {
+  const canonical = Object.keys(ROUTE_MAP).find(
+    p => ROUTE_MAP[p].route === route,
+  );
+  return canonical ?? '';
+}
+
 const HTTPS_PREFIXES = ['http://', 'https://'];
 const PROTOCOL_REGEX = /^[a-z][a-z0-9+.-]*:/i;
 

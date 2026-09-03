@@ -1,13 +1,10 @@
 import { getVersion } from 'react-native-device-info';
-import { APP_VERSION, AUDIENCE, CONTRACT_VERSION, MARKET } from '../../config';
+import { AUDIENCE, CONTRACT_VERSION, MARKET } from '../../config';
 import { platform, type MobileOS } from '../platform';
 
 export function getAppVersion(): string {
   const native = getVersion();
-  if (typeof native === 'string' && native.length > 0) {
-    return normalizeVersion(native);
-  }
-  return normalizeVersion(APP_VERSION);
+  return normalizeVersion(native);
 }
 
 export function normalizeVersion(value: string): string {
@@ -44,12 +41,15 @@ export function deliveryQueryToSearchParams(query: DeliveryQuery): string {
     ['audience', query.audience],
     ['appVersion', query.appVersion],
   ] as const;
-  return parts
+
+  const queryParams = parts
     .map(
       ([key, value]) =>
         `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
     )
     .join('&');
+
+  return queryParams;
 }
 
 export { CONTRACT_VERSION };

@@ -1,8 +1,8 @@
-import React from 'react';
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
 import { useTheme } from '../../ui/theme';
 import { ThemedText } from '../../ui/components/Text';
 import { normalizeVersion } from '../../core/context/queryContext';
+import { STORE_URL } from '../../config';
 
 interface AppUpdateBannerProps {
   policy?: string;
@@ -18,8 +18,10 @@ export function AppUpdateBanner({
   recommendedVersion,
   message,
   currentVersion,
-}: AppUpdateBannerProps): React.JSX.Element | null {
+}: AppUpdateBannerProps): JSX.Element | null {
   const theme = useTheme();
+  const storeUrl = STORE_URL;
+
   if (!policy) {
     return null;
   }
@@ -39,7 +41,9 @@ export function AppUpdateBanner({
     : message ?? 'Hay una versión nueva disponible. Recomendamos actualizar.';
 
   const handleUpdate = () => {
-    Linking.openURL('https://example.invalid/store');
+    if (storeUrl) {
+      Linking.openURL(storeUrl);
+    }
   };
 
   return (
@@ -58,19 +62,21 @@ export function AppUpdateBanner({
       <ThemedText variant="body" style={styles.message}>
         {text}
       </ThemedText>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Actualizar"
-        onPress={handleUpdate}
-        style={({ pressed }) => [
-          styles.button,
-          { backgroundColor: theme.colors.accent },
-          pressed && styles.pressed,
-        ]}>
-        <ThemedText variant="button" color="onAccent">
-          Actualizar
-        </ThemedText>
-      </Pressable>
+      {storeUrl ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Actualizar"
+          onPress={handleUpdate}
+          style={({ pressed }) => [
+            styles.button,
+            { backgroundColor: theme.colors.accent },
+            pressed && styles.pressed,
+          ]}>
+          <ThemedText variant="button" color="onAccent">
+            Actualizar
+          </ThemedText>
+        </Pressable>
+      ) : null}
     </View>
   );
 }

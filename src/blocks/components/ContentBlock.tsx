@@ -1,23 +1,21 @@
 import { StyleSheet, View } from 'react-native';
-import type { TextBlock } from '../../api/types';
+import type { ContentBlock } from '../../api/types';
 import { ThemedText } from '../../ui/components/Text';
 
-interface TextBlockProps {
-  block: TextBlock;
+interface ContentBlockProps {
+  block: ContentBlock;
 }
 
-export function TextBlockComponent({
-  block,
-}: TextBlockProps): JSX.Element {
+export function ContentBlock({ block }: ContentBlockProps): JSX.Element | null {
   const isCenter = block.alignment === 'center';
 
   if (!block.heading && !block.body && !block.eyebrow) {
-    return <View testID="textBlock-empty" />;
+    return null;
   }
 
   return (
     <View
-      testID="textBlock"
+      testID="content"
       style={[styles.container, isCenter && styles.centered]}>
       {block.eyebrow ? (
         <ThemedText variant="eyebrow" color="accent">

@@ -1,37 +1,35 @@
 import { StyleSheet, View } from 'react-native';
-import type { ImageBlock } from '../../api/types';
+import type { MediaBlock } from '../../api/types';
 import { MediaImage } from '../../ui/components/MediaImage';
 import { ThemedText } from '../../ui/components/Text';
 
-interface ImageBlockProps {
-  block: ImageBlock;
+interface MediaBlockProps {
+  block: MediaBlock;
 }
 
-export function ImageBlockComponent({
-  block,
-}: ImageBlockProps): JSX.Element {
-  const image = block.mobileImage ?? block.image;
+export function MediaBlock({ block }: MediaBlockProps): JSX.Element | null {
+  const media = block.media ?? block.image;
 
-  if (!image?.url && !image?.sizes) {
-    return <View testID="imageBlock-empty" style={styles.hidden} />;
+  if (!media?.url && !media?.sizes) {
+    return null;
   }
 
   return (
     <View
-      testID="imageBlock"
+      testID="mediaBlock"
       style={[
         styles.container,
         block.fullBleed ? styles.fullBleed : styles.contained,
       ]}>
       <MediaImage
-        media={image}
+        media={media}
         style={styles.image}
-        aspectRatio={16 / 9}
-        accessibilityLabel={image.alt ?? undefined}
+        aspectRatio={block.aspectRatio ?? 16 / 9}
+        accessibilityLabel={media.alt}
       />
-      {image.alt ? (
+      {block.caption ? (
         <ThemedText variant="caption" color="muted" style={styles.caption}>
-          {image.alt}
+          {block.caption}
         </ThemedText>
       ) : null}
     </View>
@@ -39,9 +37,6 @@ export function ImageBlockComponent({
 }
 
 const styles = StyleSheet.create({
-  hidden: {
-    height: 0,
-  },
   container: {
     marginBottom: 20,
     gap: 6,

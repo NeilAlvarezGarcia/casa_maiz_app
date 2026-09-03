@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   StyleSheet,
   View,
@@ -54,7 +53,7 @@ export function ContentCard({
   imageStyle,
   accessibilityLabel,
   testID,
-}: ContentCardProps): React.JSX.Element {
+}: ContentCardProps): JSX.Element {
   return (
     <View style={[CARD_BASE_STYLE, cardStyle]} testID={testID}>
       {image ? (

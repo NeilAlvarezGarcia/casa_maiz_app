@@ -1,4 +1,3 @@
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useBootstrap, useFeatureFlag } from '../../state/bootstrap';
 import { useTheme } from '../../ui/theme';
@@ -6,21 +5,35 @@ import { ThemedText } from '../../ui/components/Text';
 import { ActionLink } from '../../ui/components/ActionLink';
 import { ContentCard } from '../../ui/components/ContentCard';
 import { SectionHeader } from '../../blocks/components/SectionHeader';
-import type { BootstrapPromotion } from '../../api/schemas/bootstrap';
+import { pathForRoute, RouteNames } from '../../navigation/destinationResolver';
+import {
+  experienceLabelKeys,
+  type BootstrapPromotion,
+  type ExperienceLabelKey,
+} from '../../api/schemas/bootstrap';
 
-export function HomePromotions(): React.JSX.Element | null {
+function useExperienceLabels(): Map<ExperienceLabelKey, string> {
   const { data } = useBootstrap();
-  const promotions = (data.promotions ?? [])
-    .filter(promo => (promo.placement ?? 'home') === 'home')
+  const labels = (data.experience?.labels ?? []).filter(
+    (label): label is { key: ExperienceLabelKey; value: string } =>
+      experienceLabelKeys.includes(label.key as ExperienceLabelKey),
+  );
+  return new Map(labels.map(label => [label.key, label.value]));
+}
+
+export function HomePromotions(): JSX.Element | null {
+  const { data } = useBootstrap();
+  const labels = useExperienceLabels();
+  const promotions = data.promotions?.filter(promo => promo.placement === 'home')
     .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
 
-  if (!promotions.length) {
+  if (!promotions?.length) {
     return null;
   }
 
   return (
     <View testID="home-promotions" style={styles.section}>
-      <SectionHeader eyebrow="Promociones" />
+      <SectionHeader eyebrow={labels.get('promotions_title')} />
       {promotions.map((promo, i) => (
         <PromotionCard key={promo.id ?? `home-promo-${i}`} promo={promo} />
       ))}
@@ -32,7 +45,7 @@ function PromotionCard({
   promo,
 }: {
   promo: BootstrapPromotion;
-}): React.JSX.Element {
+}): JSX.Element {
   return (
     <ContentCard
       image={promo.mobileImage ?? promo.desktopImage}
@@ -48,40 +61,45 @@ function PromotionCard({
   );
 }
 
-export function FlaggedHomeModules(): React.JSX.Element | null {
-  const { data } = useBootstrap();
+export function FlaggedHomeModules(): JSX.Element | null {
   const showStoreLocator = useFeatureFlag('show_store_locator_banner');
   const showRewards = useFeatureFlag('show_rewards_module');
+  const labels = useExperienceLabels();
 
-  const experienceLabels = new Map(
-    (data.experience?.labels ?? []).map(label => [label.key, label.value]),
-  );
+  const storeLocator =
+    showStoreLocator &&
+    labels.has('store_locator_title') &&
+    labels.has('store_locator_description') &&
+    labels.has('reserve');
 
-  const reserveLabel = experienceLabels.get('reserve') ?? 'Reservar';
-  const menuLabel = experienceLabels.get('menu') ?? 'Ver menú';
+  const rewards =
+    showRewards &&
+    labels.has('rewards_title') &&
+    labels.has('rewards_description') &&
+    labels.has('order');
 
-  if (!showStoreLocator && !showRewards) {
+  if (!storeLocator && !rewards) {
     return null;
   }
 
   return (
     <View style={styles.section}>
-      {showStoreLocator ? (
+      {storeLocator ? (
         <FlagCard
           testID="flag-store-locator"
-          title="Encuentra tu sucursal"
-          description="Consulta la más cercana y el horario de cada casa."
-          ctaLabel={reserveLabel}
-          destination={{ path: '/reservas' }}
+          title={labels.get('store_locator_title')!}
+          description={labels.get('store_locator_description')!}
+          ctaLabel={labels.get('reserve')!}
+          destination={{ path: pathForRoute(RouteNames.Reservations) }}
         />
       ) : null}
-      {showRewards ? (
+      {rewards ? (
         <FlagCard
           testID="flag-rewards"
-          title="Recompensas"
-          description="Acumula puntos con cada visita y canjéalos en tu próxima orden."
-          ctaLabel={menuLabel}
-          destination={{ path: '/menu' }}
+          title={labels.get('rewards_title')!}
+          description={labels.get('rewards_description')!}
+          ctaLabel={labels.get('order')!}
+          destination={{ path: pathForRoute(RouteNames.Menu) }}
         />
       ) : null}
     </View>
@@ -102,7 +120,7 @@ function FlagCard({
   description,
   ctaLabel,
   destination,
-}: FlagCardProps): React.JSX.Element {
+}: FlagCardProps): JSX.Element {
   const theme = useTheme();
   return (
     <View

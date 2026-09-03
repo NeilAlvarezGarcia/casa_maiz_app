@@ -1,4 +1,3 @@
-import React from 'react';
 import { CmsClient } from '../../api/cmsClient';
 import { usePageData } from '../hooks/usePageData';
 import { PageScreen } from '../shared/PageScreen';
@@ -9,7 +8,7 @@ interface HomeScreenProps {
   client: CmsClient;
 }
 
-export function HomeScreen({ client }: HomeScreenProps): React.JSX.Element {
+export function HomeScreen({ client }: HomeScreenProps): JSX.Element {
   const { state, refresh } = usePageData(client, 'home');
 
   const banner = (

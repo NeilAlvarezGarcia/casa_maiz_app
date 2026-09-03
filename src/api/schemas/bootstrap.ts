@@ -63,14 +63,29 @@ export const bootstrapPromotionSchema = z.looseObject({
     .optional(),
 });
 
+export const experienceLabelKeys = [
+  'order',
+  'reserve',
+  'promotions_title',
+  'store_locator_title',
+  'store_locator_description',
+  'rewards_title',
+  'rewards_description',
+] as const;
+
+export type ExperienceLabelKey = (typeof experienceLabelKeys)[number];
+
+export const experienceLabelSchema = z.looseObject({
+  key: z.string(),
+  value: z.string(),
+});
+
 export const experienceSchema = z.looseObject({
   key: z.string().optional(),
   name: z.string().optional(),
   layout: z.string().optional(),
   visibleModules: z.array(z.string()).optional(),
-  labels: z
-    .array(z.looseObject({ key: z.string(), value: z.string() }))
-    .optional(),
+  labels: z.array(experienceLabelSchema).optional(),
   navigation: bootstrapNavigationSchema.optional(),
   visualDefaults: z
     .object({

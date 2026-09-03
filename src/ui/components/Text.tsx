@@ -1,4 +1,3 @@
-import React from 'react';
 import { Text, type TextProps, type TextStyle } from 'react-native';
 import { useTheme } from '../theme';
 
@@ -35,7 +34,7 @@ export function ThemedText({
   color = 'text',
   style,
   ...props
-}: ThemedTextProps): React.JSX.Element {
+}: ThemedTextProps): JSX.Element {
   const theme = useTheme();
   const colorMap = {
     text: theme.colors.text,

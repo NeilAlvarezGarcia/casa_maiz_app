@@ -1,4 +1,4 @@
-import React, {
+import {
   createContext,
   useContext,
   type PropsWithChildren,
@@ -10,7 +10,7 @@ const ActiveRouteContext = createContext<RouteName>(DEFAULT_ROUTE);
 export function ActiveRouteProvider({
   value,
   children,
-}: PropsWithChildren<{ value: RouteName }>): React.JSX.Element {
+}: PropsWithChildren<{ value: RouteName }>): JSX.Element {
   return (
     <ActiveRouteContext.Provider value={value}>
       {children}

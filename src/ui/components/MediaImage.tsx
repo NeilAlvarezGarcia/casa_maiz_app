@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import {
   Image,
   StyleSheet,
@@ -30,7 +30,7 @@ export function MediaImage({
   aspectRatio,
   accessibilityLabel,
   testID,
-}: MediaImageProps): React.JSX.Element | null {
+}: MediaImageProps): JSX.Element | null {
   const resolved = useMemo(
     () => preferredMediaUrl(source ?? media),
     [source, media],

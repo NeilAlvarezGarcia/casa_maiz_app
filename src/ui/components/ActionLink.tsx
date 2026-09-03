@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Pressable,
   StyleSheet,
@@ -37,7 +36,7 @@ export function ActionLink({
   onPress,
   style,
   testID,
-}: ActionLinkProps): React.JSX.Element {
+}: ActionLinkProps): JSX.Element {
   const theme = useTheme();
   const navigation = useNavigation<NavigationProp<NavigatorRootParamList>>();
 

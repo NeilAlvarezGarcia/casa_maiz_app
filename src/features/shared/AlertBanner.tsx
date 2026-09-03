@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useRef } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useTheme } from '../../ui/theme';
 import { ThemedText } from '../../ui/components/Text';
@@ -17,10 +17,10 @@ export function AlertBanner({
   onAction,
   onDismiss,
   onShown,
-}: AlertBannerProps): React.JSX.Element {
+}: AlertBannerProps): JSX.Element {
   const theme = useTheme();
-  const reported = React.useRef(false);
-  React.useEffect(() => {
+  const reported = useRef(false);
+  useEffect(() => {
     if (!reported.current) {
       reported.current = true;
       onShown?.();

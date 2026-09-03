@@ -1,10 +1,9 @@
-import React, {
+import {
   createContext,
   useContext,
-  useEffect,
-  useState,
   type PropsWithChildren,
 } from 'react';
+import { useMountedEffect } from '../core/hooks/useMountedEffect';
 import { CmsClient } from '../api/cmsClient';
 import {
   bootstrapResponseSchema,
@@ -41,23 +40,12 @@ interface Props extends PropsWithChildren {
 export function BootstrapProvider({
   client,
   children,
-}: Props): React.JSX.Element {
-  const [state, setState] = useState<BootstrapState>({
-    data: EMPTY,
-    loading: true,
-  });
-
-  useEffect(() => {
-    let mounted = true;
-    const controller = new AbortController();
-
-    const load = async () => {
+}: Props): JSX.Element {
+  const { state } = useMountedEffect<BootstrapState>(
+    async ({ signal, setState }) => {
       try {
-        const raw = await client.getBootstrap({ signal: controller.signal });
+        const raw = await client.getBootstrap({ signal });
         const parsed = bootstrapResponseSchema.safeParse(raw);
-        if (!mounted) {
-          return;
-        }
         if (parsed.success) {
           const data = parsed.data.data ?? EMPTY;
           setState({
@@ -73,7 +61,7 @@ export function BootstrapProvider({
           });
         }
       } catch (error) {
-        if (mounted && !controller.signal.aborted) {
+        if (!signal.aborted) {
           setState({
             data: EMPTY,
             loading: false,
@@ -84,14 +72,10 @@ export function BootstrapProvider({
           });
         }
       }
-    };
-
-    load();
-    return () => {
-      mounted = false;
-      controller.abort();
-    };
-  }, [client]);
+    },
+    [client],
+    { data: EMPTY, loading: true },
+  );
 
   return (
     <BootstrapContext.Provider value={state}>
@@ -106,5 +90,5 @@ export function useBootstrap(): BootstrapState {
 
 export function useFeatureFlag(key: string): boolean {
   const { data } = useBootstrap();
-  return data.featureFlags[key] === true;
+  return Boolean(data.featureFlags[key]);
 }

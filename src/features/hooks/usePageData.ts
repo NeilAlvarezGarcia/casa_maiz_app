@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { CmsClient } from '../../api/cmsClient';
 import { CmsError } from '../../api/transport';
 import type { PageData } from '../../api/types';
+import { useMountedEffect } from '../../core/hooks/useMountedEffect';
 
 export type PageLoadState =
   | { status: 'loading' }
@@ -23,51 +23,36 @@ export function usePageData(
   state: PageLoadState;
   refresh: () => void;
 } {
-  const [state, setState] = useState<PageLoadState>({ status: 'loading' });
-  const [attempt, setAttempt] = useState(0);
-  const mounted = useRef(true);
-  const abortRef = useRef<AbortController | null>(null);
-
-  const notify = useCallback((next: PageLoadState) => {
-    if (mounted.current) {
-      setState(next);
-    }
-  }, []);
-
-  useEffect(() => {
-    mounted.current = true;
-    const controller = new AbortController();
-    abortRef.current = controller;
-
-    const load = async () => {
-      notify({ status: 'loading' });
+  return useMountedEffect<PageLoadState>(
+    async ({ signal, setState }) => {
+      setState({ status: 'loading' });
       try {
-        const data = await client.getPage(slug, { signal: controller.signal });
-        if (controller.signal.aborted) {
+        const data = await client.getPage(slug, { signal });
+        if (signal.aborted) {
           return;
         }
-        notify({ status: 'success', data, stale: false });
+        setState({ status: 'success', data, stale: false });
       } catch (error) {
-        if (controller.signal.aborted) {
+        if (signal.aborted) {
           return;
         }
         if (error instanceof CmsError) {
           if (error.code === 'unsupported-contract') {
-            notify({ status: 'unsupported', message: error.message });
+            setState({ status: 'unsupported', message: error.message });
             return;
           }
           if (error.code === 'not-found') {
-            notify({ status: 'not-found' });
+            setState({ status: 'not-found' });
             return;
           }
         }
 
         const cached = await client.readCachedPage(slug);
-        if (controller.signal.aborted) {
+        if (signal.aborted) {
           return;
         }
         if (cached) {
-          notify({
+          setState({
             status: 'success',
             data: cached.data,
             stale: cached.stale,
@@ -77,14 +62,14 @@ export function usePageData(
         }
 
         if (error instanceof CmsError) {
-          notify({
+          setState({
             status: 'error',
             code: error.code,
             message: error.message,
             retryable: error.retryable,
           });
         } else {
-          notify({
+          setState({
             status: 'error',
             code: 'invalid-response',
             message: 'No se pudo cargar el contenido',
@@ -92,18 +77,8 @@ export function usePageData(
           });
         }
       }
-    };
-
-    load();
-    return () => {
-      mounted.current = false;
-      controller.abort();
-    };
-  }, [client, slug, attempt, notify]);
-
-  const refresh = useCallback(() => {
-    setAttempt(n => n + 1);
-  }, []);
-
-  return { state, refresh };
+    },
+    [client, slug],
+    { status: 'loading' },
+  );
 }

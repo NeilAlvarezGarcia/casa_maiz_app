@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -21,10 +21,11 @@ import {
   isTopBarPlacement,
   pageTargets,
 } from '../shared/alertBehavior';
+import { useMountedEffect } from '../../core/hooks/useMountedEffect';
 
 const ALERT_SHOWN_PREFIX = 'cms:v1:alertShown:';
 
-export function TopBar(): React.JSX.Element {
+export function TopBar(): JSX.Element {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const navigation = useNavigation<NavigationProp<NavigatorRootParamList>>();
@@ -32,11 +33,11 @@ export function TopBar(): React.JSX.Element {
   const activeRoute = useActiveRoute();
   const ops = data.operationalControls;
   const [dismissed, setDismissed] = useState<Record<string, boolean>>({});
-  const [cooldowns, setCooldowns] = useState<Record<string, number>>({});
-
-  useEffect(() => {
-    let mounted = true;
-    const load = async () => {
+  const {
+    state: cooldowns,
+    setState: setCooldowns,
+  } = useMountedEffect<Record<string, number>>(
+    async ({ mounted, setState }) => {
       try {
         const ids = data.alerts.map(a => a.id).filter((id): id is string => !!id);
         const entries = await Promise.all(
@@ -48,20 +49,18 @@ export function TopBar(): React.JSX.Element {
             return [id, Number.isFinite(ts) ? ts : 0] as const;
           }),
         );
-        if (mounted) {
-          setCooldowns(Object.fromEntries(entries));
+        if (mounted.current) {
+          setState(Object.fromEntries(entries));
         }
       } catch {
-        if (mounted) {
-          setCooldowns({});
+        if (mounted.current) {
+          setState({});
         }
       }
-    };
-    load();
-    return () => {
-      mounted = false;
-    };
-  }, [data.alerts]);
+    },
+    [data.alerts],
+    {},
+  );
 
   const recordShown = async (id: string | undefined) => {
     if (!id) {

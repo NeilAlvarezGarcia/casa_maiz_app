@@ -1,4 +1,3 @@
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from '../../ui/theme';
 import { ThemedText } from '../../ui/components/Text';
@@ -15,7 +14,7 @@ export function SectionHeader({
   title,
   center,
   testID,
-}: SectionHeaderProps): React.JSX.Element | null {
+}: SectionHeaderProps): JSX.Element | null {
   const theme = useTheme();
 
   if (!eyebrow && !title) {

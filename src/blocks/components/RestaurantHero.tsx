@@ -1,4 +1,3 @@
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import type { RestaurantHeroBlock } from '../../api/types';
 import { useTheme } from '../../ui/theme';
@@ -12,7 +11,7 @@ interface RestaurantHeroProps {
 
 export function RestaurantHero({
   block,
-}: RestaurantHeroProps): React.JSX.Element {
+}: RestaurantHeroProps): JSX.Element {
   const theme = useTheme();
   return (
     <View style={styles.container} testID="restaurantHero">

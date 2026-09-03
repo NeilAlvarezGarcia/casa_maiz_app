@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { CmsClient } from '../../api/cmsClient';
 import { CmsError } from '../../api/transport';
 import { extractPlainText } from '../../api/schemas/shared';
+import { useMountedEffect } from '../../core/hooks/useMountedEffect';
 
 export type LegalState =
   | { status: 'loading' }
@@ -13,19 +13,12 @@ export function useLegalContent(
   client: CmsClient,
   key: string,
 ): { state: LegalState; refresh: () => void } {
-  const [state, setState] = useState<LegalState>({ status: 'loading' });
-  const [attempt, setAttempt] = useState(0);
-  const mounted = useRef(true);
-
-  useEffect(() => {
-    mounted.current = true;
-    const controller = new AbortController();
-
-    const load = async () => {
+  return useMountedEffect<LegalState>(
+    async ({ signal, setState }) => {
       setState({ status: 'loading' });
       try {
-        const raw = await client.getLegal(key, { signal: controller.signal });
-        if (controller.signal.aborted) {
+        const raw = await client.getLegal(key, { signal });
+        if (signal.aborted) {
           return;
         }
         const data = (raw as any)?.data;
@@ -42,7 +35,7 @@ export function useLegalContent(
           body: paragraphs.length ? paragraphs : [],
         });
       } catch (error) {
-        if (controller.signal.aborted) {
+        if (signal.aborted) {
           return;
         }
         if (error instanceof CmsError) {
@@ -63,16 +56,8 @@ export function useLegalContent(
           });
         }
       }
-    };
-
-    load();
-    return () => {
-      mounted.current = false;
-      controller.abort();
-    };
-  }, [client, key, attempt]);
-
-  const refresh = useCallback(() => setAttempt(n => n + 1), []);
-
-  return { state, refresh };
+    },
+    [client, key],
+    { status: 'loading' },
+  );
 }

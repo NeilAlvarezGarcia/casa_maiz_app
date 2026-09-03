@@ -1,4 +1,4 @@
-import React, {
+import {
   createContext,
   useContext,
   useMemo,
@@ -16,7 +16,7 @@ interface ThemeProviderProps {
 export function ThemeProvider({
   children,
   accent,
-}: PropsWithChildren<ThemeProviderProps>): React.JSX.Element {
+}: PropsWithChildren<ThemeProviderProps>): JSX.Element {
   const scheme = useColorScheme();
   const isDark = scheme === 'dark';
   const theme = useMemo(() => buildTheme(isDark, accent), [isDark, accent]);

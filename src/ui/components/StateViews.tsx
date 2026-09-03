@@ -1,4 +1,3 @@
-import React from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import { useTheme } from '../theme';
 import { ThemedText } from './Text';
@@ -7,7 +6,7 @@ export function LoadingState({
   label = 'Cargando…',
 }: {
   label?: string;
-}): React.JSX.Element {
+}): JSX.Element {
   const theme = useTheme();
   return (
     <View style={styles.container} accessibilityRole="progressbar">
@@ -33,7 +32,7 @@ export function ErrorState({
   onRetry,
   retryLabel = 'Reintentar',
   testID,
-}: ErrorStateProps): React.JSX.Element {
+}: ErrorStateProps): JSX.Element {
   const theme = useTheme();
   return (
     <View style={styles.container} testID={testID}>
@@ -67,7 +66,7 @@ export function ErrorState({
   );
 }
 
-export function EmptyState({ label }: { label: string }): React.JSX.Element {
+export function EmptyState({ label }: { label: string }): JSX.Element {
   return (
     <View style={styles.container}>
       <ThemedText variant="body" color="muted" style={styles.centerText}>

@@ -1,4 +1,3 @@
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from '../../ui/theme';
 import { ThemedText } from '../../ui/components/Text';
@@ -9,7 +8,7 @@ interface UnknownBlockProps {
 
 export function UnknownBlock({
   blockType,
-}: UnknownBlockProps): React.JSX.Element {
+}: UnknownBlockProps): JSX.Element {
   const theme = useTheme();
 
   return (
