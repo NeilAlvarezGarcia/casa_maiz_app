@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { AccessibilityInfo, Platform } from 'react-native';
+import { AccessibilityInfo } from 'react-native';
+import { isIos } from '../platform';
 
 export function useReducedTransparency(): boolean {
   const [reduced, setReduced] = useState(false);
 
   useEffect(() => {
-    if (Platform.OS !== 'ios') {
+    if (!isIos) {
       return;
     }
     AccessibilityInfo.isReduceTransparencyEnabled().then(setReduced);

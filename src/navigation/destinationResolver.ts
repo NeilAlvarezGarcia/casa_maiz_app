@@ -1,6 +1,6 @@
 import { Linking } from 'react-native';
-import { Platform } from 'react-native';
 import type { NavigationProp } from '@react-navigation/native';
+import { platform } from '../core/platform';
 
 export type NavigatorRootParamList = {
   Home: undefined;
@@ -94,7 +94,7 @@ export function currentPlatformSupported(destination?: {
   if (!destination?.supportedPlatforms?.length) {
     return true;
   }
-  const os = Platform.OS === 'android' ? 'android' : 'ios';
+  const os = platform;
   return (
     destination.supportedPlatforms.includes(os) ||
     destination.supportedPlatforms.includes('all')

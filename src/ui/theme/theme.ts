@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { isAndroid } from '../../core/platform';
 
 export interface ThemeColors {
   accent: string;
@@ -156,7 +156,6 @@ export function buildTheme(isDark: boolean, accent?: string): ThemeType {
       ? contrastOnAccent(accent, isDark)
       : palette.textOnAccent,
   };
-  const isAndroid = Platform.OS === 'android';
   return {
     colors,
     spacing,

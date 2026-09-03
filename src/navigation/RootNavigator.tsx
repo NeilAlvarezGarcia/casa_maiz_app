@@ -1,5 +1,6 @@
 import React from 'react';
-import { Platform, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
+import { isIos } from '../core/platform';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeScreen } from '../features/home/HomeScreen';
 import { MenuScreen } from '../features/menu/MenuScreen';
@@ -71,7 +72,7 @@ export function RootNavigator({
           {
             backgroundColor: tabBarBackground,
             borderTopColor: theme.colors.border,
-            height: Platform.OS === 'ios' ? 82 : 64,
+            height: isIos ? 82 : 64,
           },
         ],
         tabBarActiveTintColor: theme.colors.accent,

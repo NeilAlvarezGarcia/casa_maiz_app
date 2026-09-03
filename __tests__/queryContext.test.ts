@@ -5,9 +5,9 @@
 import {
   buildDeliveryQuery,
   deliveryQueryToSearchParams,
-  getPlatform,
   normalizeVersion,
 } from '../src/core/context/queryContext';
+import { platform } from '../src/core/platform';
 
 describe('delivery query context', () => {
   it('constructs the required delivery context for the CMS contract', () => {
@@ -45,9 +45,9 @@ describe('delivery query context', () => {
     });
   });
 
-  describe('getPlatform', () => {
-    it('returns only ios or android', () => {
-      expect(['ios', 'android']).toContain(getPlatform());
+  describe('platform', () => {
+    it('resolves to only ios or android', () => {
+      expect(['ios', 'android']).toContain(platform);
     });
   });
 });

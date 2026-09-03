@@ -1,6 +1,6 @@
-import { Platform } from 'react-native';
 import { getVersion } from 'react-native-device-info';
 import { APP_VERSION, AUDIENCE, CONTRACT_VERSION, MARKET } from '../../config';
+import { platform, type MobileOS } from '../platform';
 
 export function getAppVersion(): string {
   const native = getVersion();
@@ -21,14 +21,8 @@ export function normalizeVersion(value: string): string {
   return `${major}.${minor}.${patch}`;
 }
 
-export function getPlatform(): 'ios' | 'android' {
-  return Platform.OS === 'ios' || Platform.OS === 'android'
-    ? Platform.OS
-    : 'ios';
-}
-
 export interface DeliveryQuery {
-  platform: 'ios' | 'android';
+  platform: MobileOS;
   market: string;
   audience: string;
   appVersion: string;
@@ -36,7 +30,7 @@ export interface DeliveryQuery {
 
 export function buildDeliveryQuery(): DeliveryQuery {
   return {
-    platform: getPlatform(),
+    platform,
     market: MARKET,
     audience: AUDIENCE,
     appVersion: getAppVersion(),
