@@ -10,8 +10,8 @@ import { AlertBanner } from '../shared/AlertBanner';
 import { AppUpdateBanner } from '../shared/AppUpdateBanner';
 import {
   handleDestination,
-  type NavigatorRootParamList,
 } from '../../navigation/destinationResolver';
+import type { NavigatorRootParamList } from '../../navigation/routes';
 import { useActiveRoute } from '../../navigation/activeRoute';
 import { asyncStorageAdapter } from '../../cache/storage';
 import { getAppVersion } from '../../core/context/queryContext';

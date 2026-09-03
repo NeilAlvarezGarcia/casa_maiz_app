@@ -1,6 +1,7 @@
 import { linking } from '../src/navigation/deepLink';
 import { DEEP_LINK_SCHEME, WEB_PREFIX_URL } from '../src/config';
 import { ROUTE_MAP } from '../src/navigation/destinationResolver';
+import { RouteNames } from '../src/navigation/routes';
 
 describe('deep link configuration', () => {
   it('prefers the custom scheme and the published CMS host', () => {
@@ -12,8 +13,7 @@ describe('deep link configuration', () => {
     const screens = linking.config?.screens;
     expect(screens).toBeTruthy();
 
-    const routeNames = ['Home', 'Menu', 'Reservations', 'Privacy'];
-    for (const name of routeNames) {
+    for (const name in RouteNames) {
       expect(screens).toHaveProperty(name);
     }
   });

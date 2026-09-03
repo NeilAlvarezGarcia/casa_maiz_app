@@ -11,35 +11,36 @@ import {
   handleDestination,
   resolveDestination,
 } from '../src/navigation/destinationResolver';
+import { RouteNames } from '../src/navigation/routes';
 
 describe('destinationResolver', () => {
   it('maps every known CMS path to an internal route', () => {
     expect(resolveDestination('/')).toEqual({
       kind: 'internal',
-      route: 'Home',
+      route: RouteNames.Home,
     });
     expect(resolveDestination('/menu')).toEqual({
       kind: 'internal',
-      route: 'Menu',
+      route: RouteNames.Menu,
     });
     expect(resolveDestination('/reservation')).toEqual({
       kind: 'internal',
-      route: 'Reservations',
+      route: RouteNames.Reservations,
     });
     expect(resolveDestination('/legal/privacy_policy')).toEqual({
       kind: 'internal',
-      route: 'Privacy',
+      route: RouteNames.Privacy,
     });
   });
 
   it('accepts destinations expressed as objects (path or href)', () => {
     expect(resolveDestination({ path: '/menu' })).toEqual({
       kind: 'internal',
-      route: 'Menu',
+      route: RouteNames.Menu,
     });
     expect(resolveDestination({ href: '/menu' })).toEqual({
       kind: 'internal',
-      route: 'Menu',
+      route: RouteNames.Menu,
     });
   });
 
@@ -69,7 +70,7 @@ describe('destinationResolver', () => {
   it('navigates to the mapped route for internal destinations', async () => {
     const navigation = { navigate: jest.fn() };
     await handleDestination(navigation as never, '/menu');
-    expect(navigation.navigate).toHaveBeenCalledWith('Menu');
+    expect(navigation.navigate).toHaveBeenCalledWith(RouteNames.Menu);
   });
 
   it('requires every ROUTE_MAP key to be a slash-prefixed path', () => {

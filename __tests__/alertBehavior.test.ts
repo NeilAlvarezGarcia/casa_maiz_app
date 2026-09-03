@@ -5,6 +5,7 @@ import {
   pageTargets,
 } from '../src/features/shared/alertBehavior';
 import type { Alert } from '../src/api/schemas/bootstrap';
+import { RouteNames } from '../src/navigation/routes';
 
 function makeAlert(overrides: Partial<Alert> = {}): Alert {
   return {
@@ -98,19 +99,19 @@ describe('cooldownAllows', () => {
 
 describe('pageTargets', () => {
   it('targets all pages when pageSlugs is empty or absent', () => {
-    expect(pageTargets(makeAlert(), 'Home')).toBe(true);
-    expect(pageTargets(makeAlert({ pageSlugs: [] }), 'Menu')).toBe(true);
+    expect(pageTargets(makeAlert(), RouteNames.Home)).toBe(true);
+    expect(pageTargets(makeAlert({ pageSlugs: [] }), RouteNames.Menu)).toBe(true);
   });
 
   it('matches the active route by its name', () => {
     const alert = makeAlert({ pageSlugs: ['menu'] });
-    expect(pageTargets(alert, 'Menu')).toBe(true);
-    expect(pageTargets(alert, 'Home')).toBe(false);
+    expect(pageTargets(alert, RouteNames.Menu)).toBe(true);
+    expect(pageTargets(alert, RouteNames.Home)).toBe(false);
   });
 
   it('tolerates leading slashes and case differences in slugs', () => {
     const alert = makeAlert({ pageSlugs: ['/LEGAL/Privacy_Policy'] });
-    expect(pageTargets(alert, 'Privacy')).toBe(true);
-    expect(pageTargets(alert, 'Home')).toBe(false);
+    expect(pageTargets(alert, RouteNames.Privacy)).toBe(true);
+    expect(pageTargets(alert, RouteNames.Home)).toBe(false);
   });
 });

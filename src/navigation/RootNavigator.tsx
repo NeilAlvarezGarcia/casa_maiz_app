@@ -11,23 +11,22 @@ import { useTheme } from '../ui/theme';
 import { useReducedTransparency } from '../core/hooks/useReducedTransparency';
 import type { CmsClient } from '../api/cmsClient';
 import { ROUTE_MAP } from './destinationResolver';
+import { RouteNames, type RouteName } from './routes';
 
 const Tab = createBottomTabNavigator();
 
-type ScreenKey = 'Home' | 'Menu' | 'Reservations' | 'Privacy';
-
-const FALLBACK_TABS: Array<{ route: ScreenKey; label: string }> = [
-  { route: 'Home', label: 'Inicio' },
-  { route: 'Menu', label: 'Menú' },
-  { route: 'Reservations', label: 'Reservar' },
-  { route: 'Privacy', label: 'Privacidad' },
+const FALLBACK_TABS: Array<{ route: RouteName; label: string }> = [
+  { route: RouteNames.Home, label: 'Inicio' },
+  { route: RouteNames.Menu, label: 'Menú' },
+  { route: RouteNames.Reservations, label: 'Reservar' },
+  { route: RouteNames.Privacy, label: 'Privacidad' },
 ];
 
-const GLYPHS: Record<ScreenKey, string> = {
-  Home: '\u2302',
-  Menu: '\u25C9',
-  Reservations: '\u2733',
-  Privacy: '\u2139',
+const GLYPHS: Record<RouteName, string> = {
+  [RouteNames.Home]: '\u2302',
+  [RouteNames.Menu]: '\u25C9',
+  [RouteNames.Reservations]: '\u2733',
+  [RouteNames.Privacy]: '\u2139',
 };
 
 export function RootNavigator({
@@ -53,13 +52,13 @@ export function RootNavigator({
       if (!path) {
         return null;
       }
-      const route = ROUTE_MAP[path]?.route as ScreenKey | undefined;
+      const route = ROUTE_MAP[path]?.route as RouteName | undefined;
       if (!route) {
         return null;
       }
       return { route, label: item.label ?? route };
     })
-    .filter((t): t is { route: ScreenKey; label: string } => t !== null);
+    .filter((t): t is { route: RouteName; label: string } => t !== null);
 
   const tabs = cmsTabs.length ? cmsTabs : FALLBACK_TABS;
 
@@ -104,17 +103,17 @@ function ScreenForRoute({
   route,
   client,
 }: {
-  route: ScreenKey;
+  route: RouteName;
   client: CmsClient;
 }): React.JSX.Element {
   switch (route) {
-    case 'Home':
+    case RouteNames.Home:
       return <HomeScreen client={client} />;
-    case 'Menu':
+    case RouteNames.Menu:
       return <MenuScreen client={client} />;
-    case 'Reservations':
+    case RouteNames.Reservations:
       return <ReservationsScreen />;
-    case 'Privacy':
+    case RouteNames.Privacy:
       return <PrivacyScreen client={client} />;
   }
 }

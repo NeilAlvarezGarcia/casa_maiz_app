@@ -13,6 +13,8 @@ import {
   ActiveRouteProvider,
   focusedRouteName,
 } from './src/navigation/activeRoute';
+import { DEFAULT_ROUTE } from './src/navigation/routes';
+import type { RouteName } from './src/navigation/routes';
 
 function BootstrappedApp(): React.JSX.Element {
   const bootstrap = useBootstrap();
@@ -44,7 +46,7 @@ function BootstrappedApp(): React.JSX.Element {
 
 function App(): React.JSX.Element {
   const client = useMemo(() => getCmsClient(), []);
-  const [activeRoute, setActiveRoute] = useState('Home');
+  const [activeRoute, setActiveRoute] = useState<RouteName>(DEFAULT_ROUTE);
 
   return (
     <SafeAreaProvider>

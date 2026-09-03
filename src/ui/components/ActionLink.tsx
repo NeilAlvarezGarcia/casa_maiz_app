@@ -11,8 +11,8 @@ import { useTheme } from '../theme';
 import { ThemedText } from './Text';
 import {
   handleDestination,
-  type NavigatorRootParamList,
 } from '../../navigation/destinationResolver';
+import type { NavigatorRootParamList } from '../../navigation/routes';
 
 interface ActionLinkProps {
   label: string;

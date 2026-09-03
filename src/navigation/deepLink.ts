@@ -1,7 +1,8 @@
 import type { LinkingOptions } from '@react-navigation/native';
 import { DEEP_LINK_SCHEME, WEB_PREFIX_URL } from '../config';
 import { ROUTE_MAP } from './destinationResolver';
-import type { NavigatorRootParamList } from './destinationResolver';
+import type { NavigatorRootParamList } from './routes';
+import { RouteNames } from './routes';
 
 function pathToRoute(
   route: keyof NavigatorRootParamList,
@@ -23,10 +24,10 @@ export const linking: LinkingOptions<NavigatorRootParamList> = {
   prefixes: [`${DEEP_LINK_SCHEME}://`, WEB_PREFIX_URL],
   config: {
     screens: {
-      Home: pathToRoute('Home'),
-      Menu: pathToRoute('Menu'),
-      Reservations: pathToRoute('Reservations'),
-      Privacy: pathToRoute('Privacy'),
+      [RouteNames.Home]: pathToRoute(RouteNames.Home),
+      [RouteNames.Menu]: pathToRoute(RouteNames.Menu),
+      [RouteNames.Reservations]: pathToRoute(RouteNames.Reservations),
+      [RouteNames.Privacy]: pathToRoute(RouteNames.Privacy),
     },
   },
 };

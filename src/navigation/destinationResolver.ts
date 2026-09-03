@@ -1,23 +1,20 @@
 import { Linking } from 'react-native';
 import type { NavigationProp } from '@react-navigation/native';
 import { platform } from '../core/platform';
+import { RouteNames, type NavigatorRootParamList, type RouteName } from './routes';
 
-export type NavigatorRootParamList = {
-  Home: undefined;
-  Menu: undefined;
-  Reservations: undefined;
-  Privacy: undefined;
-};
+export type { NavigatorRootParamList, RouteName };
+export { RouteNames };
 
 export const ROUTE_MAP: Record<
   string,
-  { route: keyof NavigatorRootParamList; supportedPlatforms?: string[] }
+  { route: RouteName; supportedPlatforms?: string[] }
 > = {
-  '/': { route: 'Home' },
-  '/menu': { route: 'Menu' },
-  '/reservas': { route: 'Reservations' },
-  '/reservation': { route: 'Reservations' },
-  '/legal/privacy_policy': { route: 'Privacy' },
+  '/': { route: RouteNames.Home },
+  '/menu': { route: RouteNames.Menu },
+  '/reservas': { route: RouteNames.Reservations },
+  '/reservation': { route: RouteNames.Reservations },
+  '/legal/privacy_policy': { route: RouteNames.Privacy },
 };
 
 export interface ResolutionResult {
