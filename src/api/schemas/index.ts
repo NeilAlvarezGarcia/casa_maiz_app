@@ -46,6 +46,8 @@ export const pageDataSchema = z.looseObject({
   id: z.string().optional(),
   slug: z.string().optional(),
   title: z.string().optional(),
+  indexable: z.boolean().optional(),
+  meta: z.unknown().optional(),
   updatedAt: z.string().optional(),
   layout: z.array(payloadBlockSchema).default([]),
 });

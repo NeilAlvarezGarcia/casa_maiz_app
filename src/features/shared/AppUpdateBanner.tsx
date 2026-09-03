@@ -1,15 +1,24 @@
-import { Linking, Pressable, StyleSheet, View } from 'react-native';
+import { useState } from 'react';
+import {
+  Linking,
+  Modal,
+  Pressable,
+  StyleSheet,
+} from 'react-native';
 import { useTheme } from '../../ui/theme';
 import { ThemedText } from '../../ui/components/Text';
-import { normalizeVersion } from '../../core/context/queryContext';
-import { STORE_URL } from '../../config';
+import {
+  normalizeVersion,
+  getAppVersion,
+} from '../../core/context/queryContext';
 
 interface AppUpdateBannerProps {
   policy?: string;
   minimumVersion?: string;
   recommendedVersion?: string;
   message?: string;
-  currentVersion: string;
+  storeUrl: string;
+  currentVersion?: string;
 }
 
 export function AppUpdateBanner({
@@ -17,86 +26,125 @@ export function AppUpdateBanner({
   minimumVersion,
   recommendedVersion,
   message,
-  currentVersion,
+  storeUrl,
+  currentVersion = getAppVersion(),
 }: AppUpdateBannerProps): JSX.Element | null {
   const theme = useTheme();
-  const storeUrl = STORE_URL;
-
-  if (!policy) {
-    return null;
-  }
+  const [temporarilyClosed, setTemporarilyClosed] = useState(false);
 
   const required = policy === 'required';
   const threshold = required ? minimumVersion : recommendedVersion;
-  if (threshold) {
-    const isUpToDate =
-      normalizeVersion(currentVersion) >= normalizeVersion(threshold);
-    if (isUpToDate) {
-      return null;
-    }
+
+  const upToDate = threshold
+    ? normalizeVersion(currentVersion) >= normalizeVersion(threshold)
+    : false;
+  if (upToDate) {
+    return null;
   }
 
-  const text = required
-    ? message ?? 'Es necesario actualizar la aplicación para continuar.'
-    : message ?? 'Hay una versión nueva disponible. Recomendamos actualizar.';
-
-  const handleUpdate = () => {
-    if (storeUrl) {
-      Linking.openURL(storeUrl);
+  const close = () => {
+    if (!required) {
+      setTemporarilyClosed(true);
     }
   };
 
+  const handleUpdate = () => {
+    close();
+    Linking.openURL(storeUrl);
+  };
+
   return (
-    <View
-      testID="app-update-banner"
-      accessibilityRole="alert"
-      style={[
-        styles.container,
-        {
-          backgroundColor: required
-            ? theme.colors.danger + '22'
-            : theme.colors.surfaceAlt,
-          borderColor: required ? theme.colors.danger : theme.colors.border,
-        },
-      ]}>
-      <ThemedText variant="body" style={styles.message}>
-        {text}
-      </ThemedText>
-      {storeUrl ? (
+    <Modal
+      visible={!temporarilyClosed}
+      transparent
+      animationType="fade"
+      onRequestClose={close}
+      accessibilityViewIsModal>
+      <Pressable
+        testID="app-update-modal"
+        accessibilityRole="alert"
+        onPress={close}
+        style={[styles.backdrop, { backgroundColor: theme.colors.overlay }]}>
         <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Actualizar"
-          onPress={handleUpdate}
-          style={({ pressed }) => [
-            styles.button,
-            { backgroundColor: theme.colors.accent },
-            pressed && styles.pressed,
+          onPress={e => e.stopPropagation()}
+          accessibilityViewIsModal
+          style={[
+            styles.card,
+            {
+              backgroundColor: theme.colors.surface,
+              borderRadius: theme.radius,
+              borderColor: theme.colors.border,
+              paddingBottom: theme.spacing.md,
+            },
           ]}>
-          <ThemedText variant="button" color="onAccent">
-            Actualizar
+          <ThemedText variant="body" color="muted" style={styles.message}>
+            {message}
           </ThemedText>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Actualizar"
+            onPress={handleUpdate}
+            style={({ pressed }) => [
+              styles.primaryButton,
+              { backgroundColor: theme.colors.accent },
+              pressed && styles.pressed,
+            ]}>
+            <ThemedText variant="button" color="onAccent">
+              Actualizar
+            </ThemedText>
+          </Pressable>
+          {!required && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Ahora no"
+              onPress={close}
+              style={({ pressed }) => [
+                styles.secondaryButton,
+                pressed && styles.pressed,
+              ]}>
+              <ThemedText variant="button" color="accent">
+                Ahora no
+              </ThemedText>
+            </Pressable>
+          )}
         </Pressable>
-      ) : null}
-    </View>
+      </Pressable>
+    </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  backdrop: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  card: {
+    width: '100%',
+    maxWidth: 420,
     borderWidth: 1,
-    borderRadius: 12,
-    padding: 14,
-    gap: 10,
-    marginBottom: 8,
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    gap: 14,
   },
   message: {
-    lineHeight: 22,
+    textAlign: 'center',
+    lineHeight: 24,
   },
-  button: {
-    alignSelf: 'flex-start',
+  primaryButton: {
     borderRadius: 999,
-    paddingHorizontal: 18,
-    paddingVertical: 10,
+    paddingVertical: 14,
+    alignItems: 'center',
+    minHeight: 48,
+    justifyContent: 'center',
+  },
+  secondaryButton: {
+    borderRadius: 999,
+    paddingVertical: 12,
+    alignItems: 'center',
+    minHeight: 44,
+    justifyContent: 'center',
   },
   pressed: {
     opacity: 0.8,

@@ -3,6 +3,7 @@ import { ctaSchema, destinationSchema, mediaSchema } from './shared';
 
 export const restaurantHeroSchema = z.looseObject({
   blockType: z.literal('restaurantHero'),
+  contractVersion: z.string().optional(),
   eyebrow: z.string().optional(),
   headline: z.string().optional(),
   description: z.string().optional(),
@@ -13,6 +14,7 @@ export const restaurantHeroSchema = z.looseObject({
 
 export const textBlockSchema = z.looseObject({
   blockType: z.literal('textBlock'),
+  contractVersion: z.string().optional(),
   eyebrow: z.string().optional(),
   heading: z.string().optional(),
   body: z.string().optional(),
@@ -22,6 +24,7 @@ export const textBlockSchema = z.looseObject({
 
 export const restaurantCtaSchema = z.looseObject({
   blockType: z.literal('restaurantCTA'),
+  contractVersion: z.string().optional(),
   headline: z.string().optional(),
   description: z.string().optional(),
   label: z.string().optional(),
@@ -41,6 +44,7 @@ export const cardSchema = z.looseObject({
 
 export const cardGridSchema = z.looseObject({
   blockType: z.literal('cardGrid'),
+  contractVersion: z.string().optional(),
   eyebrow: z.string().optional(),
   title: z.string().optional(),
   cards: z.array(cardSchema).default([]),
@@ -56,6 +60,7 @@ export const carouselSlideSchema = z.looseObject({
 
 export const carouselSchema = z.looseObject({
   blockType: z.literal('carousel'),
+  contractVersion: z.string().optional(),
   eyebrow: z.string().optional(),
   title: z.string().optional(),
   slides: z.array(carouselSlideSchema).default([]),
@@ -74,6 +79,7 @@ export const promotionSchema = z.looseObject({
 });
 export const promoRailSchema = z.looseObject({
   blockType: z.literal('promoRail'),
+  contractVersion: z.string().optional(),
   eyebrow: z.string().optional(),
   title: z.string().optional(),
   promotions: z.array(promotionSchema).default([]),
@@ -82,6 +88,7 @@ export const promoRailSchema = z.looseObject({
 
 export const imageBlockSchema = z.looseObject({
   blockType: z.literal('imageBlock'),
+  contractVersion: z.string().optional(),
   image: mediaSchema.optional(),
   mobileImage: mediaSchema.optional(),
   caption: z.string().optional(),
@@ -91,6 +98,7 @@ export const imageBlockSchema = z.looseObject({
 
 export const ctaBlockSchema = z.looseObject({
   blockType: z.literal('cta'),
+  contractVersion: z.string().optional(),
   eyebrow: z.string().optional(),
   headline: z.string().optional(),
   description: z.string().optional(),
@@ -104,6 +112,7 @@ export const ctaBlockSchema = z.looseObject({
 
 export const mediaBlockSchema = z.looseObject({
   blockType: z.literal('mediaBlock'),
+  contractVersion: z.string().optional(),
   media: mediaSchema.optional(),
   image: mediaSchema.optional(),
   caption: z.string().optional(),
@@ -122,6 +131,7 @@ export const archiveItemSchema = z.looseObject({
 
 export const archiveSchema = z.looseObject({
   blockType: z.literal('archive'),
+  contractVersion: z.string().optional(),
   eyebrow: z.string().optional(),
   title: z.string().optional(),
   items: z.array(archiveItemSchema).default([]),
@@ -130,6 +140,7 @@ export const archiveSchema = z.looseObject({
 
 export const contentBlockSchema = z.looseObject({
   blockType: z.literal('content'),
+  contractVersion: z.string().optional(),
   eyebrow: z.string().optional(),
   heading: z.string().optional(),
   body: z.string().optional(),
@@ -154,6 +165,7 @@ export const formFieldSchema = z.looseObject({
 
 export const formBlockSchema = z.looseObject({
   blockType: z.literal('formBlock'),
+  contractVersion: z.string().optional(),
   title: z.string().optional(),
   description: z.string().optional(),
   form: z.string().optional(),
@@ -164,4 +176,5 @@ export const formBlockSchema = z.looseObject({
 
 export const unknownBlockSchema = z.looseObject({
   blockType: z.string(),
+  contractVersion: z.string().optional(),
 });

@@ -21,6 +21,7 @@ export const alertSchema = z.looseObject({
   image: mediaSchema.optional(),
   placement: z.string().optional(),
   priority: z.number().optional(),
+  revision: z.string().optional(),
   dismissible: z.boolean().optional(),
   trigger: z
     .object({

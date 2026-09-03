@@ -15,6 +15,7 @@ import type { NavigatorRootParamList } from '../../navigation/routes';
 import { useActiveRoute } from '../../navigation/activeRoute';
 import { asyncStorageAdapter } from '../../cache/storage';
 import { getAppVersion } from '../../core/context/queryContext';
+import { STORE_URL } from '../../config';
 import {
   alertDelayMs,
   cooldownAllows,
@@ -117,7 +118,8 @@ export function TopBar(): JSX.Element {
     (ops?.mode === 'notice' || ops?.mode === 'maintenance') &&
     ops?.bannerMessage;
 
-  const showUpdate = ops?.appUpdate?.policy;
+  const showUpdate =
+    ops?.appUpdate?.policy && ops.appUpdate?.message && STORE_URL;
 
   return (
     <View
@@ -151,6 +153,7 @@ export function TopBar(): JSX.Element {
           minimumVersion={ops.appUpdate?.minimumVersion}
           recommendedVersion={ops.appUpdate?.recommendedVersion}
           message={ops.appUpdate?.message}
+          storeUrl={STORE_URL}
           currentVersion={getAppVersion()}
         />
       ) : null}
