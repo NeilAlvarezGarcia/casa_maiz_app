@@ -3,6 +3,8 @@
 A React Native (CLI) + TypeScript app that renders a restaurant experience
 driven by the published Casa Maíz Payload CMS API.
 
+Android APK: [Try android app](https://drive.google.com/file/d/1zSF76-b2JXsuf55YMhNaKRt3POQvTVNA/view?usp=sharing)
+
 - **Platforms:** iOS & Android (React Native CLI, not Expo)
 - **Stack:** React Native 0.76, React Navigation 7, Zod 4, AsyncStorage, NetInfo
 
