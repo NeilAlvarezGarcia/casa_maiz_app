@@ -4,8 +4,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { getCmsClient } from './src/api/clientSingleton';
 import { BootstrapProvider, useBootstrap } from './src/state/bootstrap';
+import { NetworkProvider } from './src/state/network';
 import { ThemeProvider, useTheme } from './src/ui/theme';
 import { TopBar } from './src/features/shared/TopBar';
+import { OfflineBanner } from './src/features/shared/OfflineBanner';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { linking } from './src/navigation/deepLink';
 import { LoadingState } from './src/ui/components/StateViews';
@@ -36,6 +38,7 @@ function BootstrappedApp(): React.JSX.Element {
         ) : (
           <>
             <TopBar />
+            <OfflineBanner />
             <RootNavigator client={getCmsClient()} />
           </>
         )}
@@ -50,17 +53,19 @@ function App(): React.JSX.Element {
 
   return (
     <SafeAreaProvider>
-      <ActiveRouteProvider value={activeRoute}>
-        <NavigationContainer
-          linking={linking}
-          onStateChange={state => setActiveRoute(focusedRouteName(state))}>
-          <BootstrapProvider client={client}>
-            <ThemeProvider>
-              <BootstrappedApp />
-            </ThemeProvider>
-          </BootstrapProvider>
-        </NavigationContainer>
-      </ActiveRouteProvider>
+      <NetworkProvider>
+        <ActiveRouteProvider value={activeRoute}>
+          <NavigationContainer
+            linking={linking}
+            onStateChange={state => setActiveRoute(focusedRouteName(state))}>
+            <BootstrapProvider client={client}>
+              <ThemeProvider>
+                <BootstrappedApp />
+              </ThemeProvider>
+            </BootstrapProvider>
+          </NavigationContainer>
+        </ActiveRouteProvider>
+      </NetworkProvider>
     </SafeAreaProvider>
   );
 }

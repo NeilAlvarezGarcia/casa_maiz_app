@@ -10,7 +10,7 @@ is hardcoded.
 
 - **Platforms:** iOS & Android (React Native CLI)
 - **CMS API:** `API_BASE_URL env variable` (contract `CONTRACT_VERSION env variable`)
-- **Stack:** React Native 0.76, React Navigation 7, Zod 4, AsyncStorage
+- **Stack:** React Native 0.76, React Navigation 7, Zod 4, AsyncStorage, NetInfo
 
 ## Commands
 
@@ -62,10 +62,12 @@ After editing `.env`, restart Metro with a cache reset so values are re-inlined:
   media exposes alt text, touch targets respect minimum size.
 - **Architecture:** existing modules live in `src/` — `api/` (schemas,
   transport, CmsClient), `cache/`, `ui/`, `blocks/` (data-driven
-  `BlockRenderer` registry), `navigation/`, `state/` (bootstrap provider),
-  `features/`, `core/`, `config/`. Follow existing import/naming patterns; a
-  single `CmsClient` builds the shared query context — do not let per-screen
-  query construction drift.
+  `BlockRenderer` registry), `navigation/`, `state/` (bootstrap provider,
+  network provider), `features/`, `core/`, `config/`. Follow existing
+  import/naming patterns; a single `CmsClient` builds the shared query
+  context — do not let per-screen query construction drift. Global offline
+  state lives in `NetworkProvider` (`src/state/network.tsx`) and drives the
+  single `<OfflineBanner />` rendered in `App.tsx`.
 - **Pin constraints:** `@testing-library/react-native@13` + `react-test-renderer`
   are pinned below v14 (v14 requires React 19 / RN ≥0.78). Do not bump versions
   that break this pairing.

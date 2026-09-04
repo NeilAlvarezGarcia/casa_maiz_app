@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import {
-  Pressable,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -8,7 +7,6 @@ import {
 } from 'react-native';
 import { BlockRenderer } from '../../blocks/BlockRenderer';
 import { useTheme } from '../../ui/theme';
-import { ThemedText } from '../../ui/components/Text';
 import {
   LoadingState,
   ErrorState,
@@ -81,24 +79,6 @@ export function PageScreen({
 
   const layout = state.data.layout ?? [];
 
-  const staleRetry =
-    state.status === 'success' &&
-    state.stale &&
-    onRefresh ? (
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Reintentar conexión"
-        onPress={onRefresh}
-        style={({ pressed }) => [
-          styles.retryLink,
-          pressed && styles.pressed,
-        ]}>
-        <ThemedText variant="button" color="accent">
-          Reintentar
-        </ThemedText>
-      </Pressable>
-    ) : null;
-
   return (
     <ScrollView
       testID={testID}
@@ -119,7 +99,6 @@ export function PageScreen({
         ) : undefined
       }>
       <View style={styles.banner}>
-        {staleRetry}
         {banner ? banner : null}
       </View>
       {layout.length === 0 ? (
@@ -145,14 +124,5 @@ const styles = StyleSheet.create({
   },
   banner: {
     marginTop: 12,
-  },
-  retryLink: {
-    alignSelf: 'flex-start',
-    paddingVertical: 4,
-    minHeight: 40,
-    justifyContent: 'center',
-  },
-  pressed: {
-    opacity: 0.7,
   },
 });

@@ -1,7 +1,6 @@
 import { CmsClient } from '../../api/cmsClient';
 import { usePageData } from '../hooks/usePageData';
 import { PageScreen } from '../shared/PageScreen';
-import { StaleNotice } from '../shared/StaleBanner';
 import { HomePromotions, FlaggedHomeModules } from './HomeModules';
 
 interface HomeScreenProps {
@@ -13,7 +12,6 @@ export function HomeScreen({ client }: HomeScreenProps): JSX.Element {
 
   const banner = (
     <>
-      <StaleNotice state={state} />
       <HomePromotions />
       <FlaggedHomeModules />
     </>

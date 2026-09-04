@@ -4,7 +4,7 @@ A React Native (CLI) + TypeScript app that renders a restaurant experience
 driven by the published Casa Maíz Payload CMS API.
 
 - **Platforms:** iOS & Android (React Native CLI, not Expo)
-- **Stack:** React Native 0.76, React Navigation 7, Zod 4, AsyncStorage
+- **Stack:** React Native 0.76, React Navigation 7, Zod 4, AsyncStorage, NetInfo
 
 ---
 
@@ -163,6 +163,12 @@ Run with `npm test`.
   normalized to semantic `x.y.z` (falling back to `1.0.0` when the native
   module is unavailable, e.g. Jest). It is a small native module that autolinks
   on both platforms; iOS requires a `pod install` after adding it.
+- **`@react-native-community/netinfo`** — detects online/offline connectivity.
+  Used by `NetworkProvider` (`src/state/network.tsx`) to drive a single global
+  `<OfflineBanner />` rendered in `App.tsx`. Autolinks on both platforms; the
+  `ACCESS_NETWORK_STATE` Android permission is merged automatically. iOS
+  simulator has a known issue where it does not fire network-change events
+  correctly — test on a real device for accurate behavior.
 
 ## Deep linking (optional bonus)
 
