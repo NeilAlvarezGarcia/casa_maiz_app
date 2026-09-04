@@ -56,7 +56,6 @@ export const destinationSchema = z.looseObject({
   label: z.string().optional(),
   path: z.string().optional(),
   href: z.string().optional(),
-  supportedPlatforms: z.array(z.string()).optional(),
 });
 
 export const ctaSchema = z.looseObject({

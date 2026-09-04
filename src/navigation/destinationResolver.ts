@@ -1,15 +1,11 @@
 import { Linking } from 'react-native';
 import type { NavigationProp } from '@react-navigation/native';
-import { platform } from '../core/platform';
 import { RouteNames, type NavigatorRootParamList, type RouteName } from './routes';
 
 export type { NavigatorRootParamList, RouteName };
 export { RouteNames };
 
-export const ROUTE_MAP: Record<
-  string,
-  { route: RouteName; supportedPlatforms?: string[] }
-> = {
+export const ROUTE_MAP: Record<string, { route: RouteName }> = {
   '/': { route: RouteNames.Home },
   '/menu': { route: RouteNames.Menu },
   '/reservas': { route: RouteNames.Reservations },
@@ -92,15 +88,3 @@ export async function handleDestination(
   }
 }
 
-export function currentPlatformSupported(destination?: {
-  supportedPlatforms?: string[];
-}): boolean {
-  if (!destination?.supportedPlatforms?.length) {
-    return true;
-  }
-  const os = platform;
-  return (
-    destination.supportedPlatforms.includes(os) ||
-    destination.supportedPlatforms.includes('all')
-  );
-}
