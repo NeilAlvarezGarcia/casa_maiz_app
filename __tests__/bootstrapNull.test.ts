@@ -36,8 +36,6 @@ describe('bootstrap null/empty tolerance', () => {
     expect(result.success).toBe(true);
     if (result.success) {
       const data = result.data.data as BootstrapData | undefined;
-      // null is safe for downstream consumers that use optional chaining:
-      // navigation?.items never throws regardless of null or undefined.
       expect(data?.navigation == null).toBe(true);
     }
   });
