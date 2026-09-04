@@ -189,4 +189,3 @@ deployment step for a future release.
   Transparency** setting is enabled it falls back to an opaque surface
   (`useReducedTransparency`, iOS-only). Android keeps a solid Material surface.
 - Android back behavior uses React Navigation's `backBehavior="firstRoute"`.
-- Scroll-triggered alerts: see "Known limitations".
