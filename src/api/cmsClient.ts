@@ -45,13 +45,45 @@ export function resolveMediaUrl(
   return `${trimmedBase}/${rawUrl}`;
 }
 
+const SIZE_ORDER: Array<{ key: string; width?: number }> = [
+  { key: 'thumbnail', width: 160 },
+  { key: 'square', width: 240 },
+  { key: 'small', width: 320 },
+  { key: 'medium', width: 640 },
+  { key: 'large', width: 1024 },
+  { key: 'xlarge', width: 1920 },
+  { key: 'og', width: 1200 },
+];
+
 export function preferredMediaUrl(
-  media: { url?: string; sizes?: Record<string, { url?: string }> } | undefined,
+  media:
+    | { url?: string; width?: number; sizes?: Record<string, { url?: string; width?: number }> }
+    | undefined,
   baseUrl: string = API_BASE_URL,
+  targetWidth?: number,
 ): string | undefined {
   if (!media) {
     return undefined;
   }
+
+  if (targetWidth && media.sizes) {
+    const candidates: Array<{ url: string; width: number | undefined }> = [];
+    for (const { key, width } of SIZE_ORDER) {
+      const url = media.sizes?.[key]?.url;
+      if (url) {
+        candidates.push({ url, width });
+      }
+    }
+
+    if (candidates.length) {
+      const resized = candidates.find(c => (c.width ?? 0) >= targetWidth);
+      const chosen = resized ?? candidates[candidates.length - 1];
+      if (chosen) {
+        return resolveMediaUrl(chosen.url, baseUrl);
+      }
+    }
+  }
+
   const preferred =
     media.sizes?.medium?.url ?? media.sizes?.small?.url ?? media.url;
   return resolveMediaUrl(preferred, baseUrl);
