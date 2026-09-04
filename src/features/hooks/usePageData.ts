@@ -18,20 +18,35 @@ export type PageLoadState =
 export function usePageData(
   client: CmsClient,
   slug: string,
-  _options: { preferCacheFirst?: boolean } = {},
 ): {
   state: PageLoadState;
   refresh: () => void;
 } {
   return useMountedEffect<PageLoadState>(
     async ({ signal, setState }) => {
-      setState({ status: 'loading' });
+      let showedCached = false;
+      const cached = await client.readCachedPage(slug);
+      if (signal.aborted) {
+        return;
+      }
+      if (cached) {
+        showedCached = true;
+        setState({
+          status: 'success',
+          data: cached.data,
+          stale: cached.stale,
+          staleReason: cached.reason,
+        });
+      } else {
+        setState({ status: 'loading' });
+      }
+
       try {
-        const data = await client.getPage(slug, { signal });
+        const fresh = await client.getPage(slug, { force: true, signal });
         if (signal.aborted) {
           return;
         }
-        setState({ status: 'success', data, stale: false });
+        setState({ status: 'success', data: fresh, stale: false });
       } catch (error) {
         if (signal.aborted) {
           return;
@@ -42,26 +57,21 @@ export function usePageData(
             return;
           }
           if (error.code === 'not-found') {
-            setState({ status: 'not-found' });
+            if (!showedCached) {
+              setState({ status: 'not-found' });
+            }
             return;
           }
         }
 
-        const cached = await client.readCachedPage(slug);
-        if (signal.aborted) {
-          return;
-        }
-        if (cached) {
+        if (showedCached) {
           setState({
             status: 'success',
-            data: cached.data,
-            stale: cached.stale,
-            staleReason: cached.reason,
+            data: cached!.data,
+            stale: true,
+            staleReason: 'offline-fallback',
           });
-          return;
-        }
-
-        if (error instanceof CmsError) {
+        } else if (error instanceof CmsError) {
           setState({
             status: 'error',
             code: error.code,

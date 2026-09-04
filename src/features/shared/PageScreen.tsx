@@ -1,7 +1,14 @@
 import type { ReactNode } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { BlockRenderer } from '../../blocks/BlockRenderer';
 import { useTheme } from '../../ui/theme';
+import { ThemedText } from '../../ui/components/Text';
 import {
   LoadingState,
   ErrorState,
@@ -74,6 +81,24 @@ export function PageScreen({
 
   const layout = state.data.layout ?? [];
 
+  const staleRetry =
+    state.status === 'success' &&
+    state.stale &&
+    onRefresh ? (
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Reintentar conexión"
+        onPress={onRefresh}
+        style={({ pressed }) => [
+          styles.retryLink,
+          pressed && styles.pressed,
+        ]}>
+        <ThemedText variant="button" color="accent">
+          Reintentar
+        </ThemedText>
+      </Pressable>
+    ) : null;
+
   return (
     <ScrollView
       testID={testID}
@@ -93,7 +118,10 @@ export function PageScreen({
           />
         ) : undefined
       }>
-      {banner ? <View style={styles.banner}>{banner}</View> : null}
+      <View style={styles.banner}>
+        {staleRetry}
+        {banner ? banner : null}
+      </View>
       {layout.length === 0 ? (
         <EmptyState label="Esta página aún no tiene contenido." />
       ) : (
@@ -117,5 +145,14 @@ const styles = StyleSheet.create({
   },
   banner: {
     marginTop: 12,
+  },
+  retryLink: {
+    alignSelf: 'flex-start',
+    paddingVertical: 4,
+    minHeight: 40,
+    justifyContent: 'center',
+  },
+  pressed: {
+    opacity: 0.7,
   },
 });

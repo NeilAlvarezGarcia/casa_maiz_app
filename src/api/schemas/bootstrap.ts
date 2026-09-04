@@ -87,12 +87,13 @@ export const experienceSchema = z.looseObject({
   layout: z.string().optional(),
   visibleModules: z.array(z.string()).optional(),
   labels: z.array(experienceLabelSchema).optional(),
-  navigation: bootstrapNavigationSchema.optional(),
+  navigation: bootstrapNavigationSchema.nullable().optional(),
   visualDefaults: z
     .object({
       accent: z.string().optional(),
       density: z.string().optional(),
     })
+    .nullable()
     .optional(),
 });
 
@@ -113,10 +114,10 @@ export const featureFlagsSchema = z.record(z.string(), z.boolean());
 
 export const bootstrapDataSchema = z.looseObject({
   alerts: z.array(alertSchema).default([]),
-  experience: experienceSchema.optional(),
+  experience: experienceSchema.nullable().optional(),
   featureFlags: featureFlagsSchema.default({}),
-  navigation: bootstrapNavigationSchema.optional(),
-  operationalControls: operationalControlsSchema.optional(),
+  navigation: bootstrapNavigationSchema.nullable().optional(),
+  operationalControls: operationalControlsSchema.nullable().optional(),
   promotions: z.array(bootstrapPromotionSchema).default([]),
 });
 
